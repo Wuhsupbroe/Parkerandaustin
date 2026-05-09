@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-    <title>Parker & Austin Tap Race</title>
+    <title>Parker & Austin: Decathlon Duel</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,400;0,700;0,800;0,900;1,900&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
@@ -134,6 +134,12 @@
             -webkit-appearance: none;
             margin: 0;
         }
+        .grid-target {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .grid-target:active {
+            transform: scale(0.8);
+        }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body-md selection:bg-surface-tint/30 selection:text-on-primary overflow-x-hidden">
@@ -150,19 +156,26 @@
             <div class="w-10 h-10 rounded-full border-2 border-primary-fixed-dim p-0.5 overflow-hidden">
                 <img alt="Racer" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5NzWGxYFi0oEDLoPL4LQlrIjxdbzmxWQoS9_vGvxP2_UVNCJ2HJnTLl5-CfnSkbFVMiFtrIMAUJdyDYov8DOBO_-9D16ywS9BLg_5dH6sXSF4btoUfWzM1qJHFcxgvvqGuRWjMIQwwBedTM89zJyv95i2_MSK_7hG-4bHauBroxjdFw0BV7h5_QPRVNDkdxOLGsvgsSm8wKOkoxeCc1CRBT69WZ6Hm1RX7oHEvSLuZu2H2mBX79XUCXz0-DFKVe5J9dmP5i50G5TI"/>
             </div>
-            <h1 class="font-display-race text-headline-md tracking-tighter text-primary-fixed-dim italic uppercase">TAP RACE</h1>
+            <h1 class="font-display-race text-headline-md tracking-tighter text-primary-fixed-dim italic uppercase">DECATHLON DUEL</h1>
         </div>
-        <div id="connection-status" class="text-secondary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10">DISCONNECTED</div>
+        <div class="flex items-center gap-4">
+            <div id="tournament-score" class="flex gap-2 bg-surface-container-high px-3 py-1 rounded-lg border border-outline-variant/30">
+                <span id="score-p1" class="font-stat-value text-primary-fixed-dim">0</span>
+                <span class="text-on-surface-variant/40">—</span>
+                <span id="score-p2" class="font-stat-value text-secondary">0</span>
+            </div>
+            <div id="connection-status" class="text-secondary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10">DISCONNECTED</div>
+        </div>
     </header>
 
     <!-- Setup Screen -->
     <main id="setup-screen" class="screen active relative z-10 pt-24 pb-32 px-container-margin flex flex-col gap-8 min-h-screen">
         <section class="text-center">
             <h2 class="font-display-race text-display-race italic text-primary mb-2">
-                PARKER <span class="text-secondary">&amp;</span> AUSTIN
+                10-GAME <span class="text-secondary">GAUNTLET</span>
             </h2>
             <div class="inline-block py-1 px-4 rounded-full border border-surface-tint/50 bg-surface-tint/10">
-                <span class="font-label-caps text-label-caps text-surface-tint uppercase">High Octane Duel</span>
+                <span class="font-label-caps text-label-caps text-surface-tint uppercase">ULTIMATE CHAMPIONSHIP</span>
             </div>
         </section>
 
@@ -201,10 +214,6 @@
                             <div id="code-3" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
                             <div id="code-4" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
                         </div>
-                        <button id="copyCodeBtn" class="mt-2 text-[10px] font-label-caps text-surface-tint uppercase flex items-center gap-1 hover:opacity-80">
-                            <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                            Copy Code
-                        </button>
                     </div>
                 </div>
             </div>
@@ -236,70 +245,92 @@
 
     <!-- Race Screen -->
     <main id="race-screen" class="screen relative z-10 flex flex-col h-screen pt-24 pb-20 px-container-margin overflow-hidden">
-        <!-- Race Status Info -->
-        <div class="flex justify-between items-end mb-8">
+        <!-- Game Header -->
+        <div class="flex justify-between items-end mb-4">
             <div class="space-y-1">
-                <span class="font-label-caps text-label-caps text-on-surface-variant block uppercase">TRACK CONDITION</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant block uppercase">CURRENT GAME</span>
                 <div class="inline-flex items-center gap-2 bg-surface-container-high/60 backdrop-blur-md px-3 py-1 rounded-lg border border-outline-variant/30">
-                    <span class="material-symbols-outlined text-[14px] text-primary">cyclone</span>
-                    <span class="font-label-caps text-label-caps text-primary uppercase">Kinetic Overdrive</span>
+                    <span id="game-icon" class="material-symbols-outlined text-[14px] text-primary">sports_esports</span>
+                    <span id="game-title" class="font-label-caps text-label-caps text-primary uppercase">Speed Tap</span>
                 </div>
             </div>
             <div class="text-right">
-                <span class="font-label-caps text-label-caps text-on-surface-variant block uppercase">WIN LIMIT</span>
-                <span class="font-stat-value text-stat-value text-on-surface">20 TAPS</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant block uppercase">PROGRESS</span>
+                <span id="game-progress" class="font-stat-value text-stat-value text-on-surface">1 / 10</span>
             </div>
         </div>
 
-        <!-- Progress Section -->
-        <div class="space-y-10 flex-1 flex flex-col justify-center">
-            <!-- Parker's Progress -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-end">
-                    <div class="flex items-baseline gap-2">
-                        <span class="font-display-race text-headline-md italic text-primary-fixed-dim">PARKER</span>
-                        <span class="font-label-caps text-[10px] text-primary-fixed-dim/60 tracking-[0.2em]">P1</span>
+        <!-- Dynamic Game Content Area -->
+        <div id="game-container" class="relative flex-1 flex flex-col justify-center gap-8 min-h-0">
+            <!-- Standard Tapping View (Default) -->
+            <div id="view-tapping" class="space-y-10">
+                <!-- Parker's Progress -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <span class="font-display-race text-sm italic text-primary-fixed-dim">PARKER</span>
+                        <span id="scoreParker" class="font-display-race text-2xl text-primary-fixed-dim">0</span>
                     </div>
-                    <span id="scoreParker" class="font-display-race text-headline-lg-mobile text-primary-fixed-dim drop-shadow-[0_0_10px_rgba(0,219,233,0.5)]">0</span>
+                    <div class="h-3 w-full bg-surface-container-lowest glass-stroke rounded-full overflow-hidden p-0.5">
+                        <div id="fillParker" class="h-full bg-primary-container rounded-full transition-all duration-300" style="width: 0%;"></div>
+                    </div>
                 </div>
-                <div class="h-6 w-full bg-surface-container-lowest glass-stroke rounded-sm overflow-hidden p-1 relative">
-                    <div id="fillParker" class="h-full bg-gradient-to-r from-primary-fixed-dim/40 to-primary-container rounded-sm shadow-[0_0_15px_#00f0ff] transition-all duration-300" style="width: 0%;"></div>
+
+                <!-- Central Tap Area -->
+                <div class="relative flex justify-center items-center py-4">
+                    <div class="absolute w-40 h-40 rounded-full border border-primary-fixed-dim/20 animate-pulse-ring"></div>
+                    <button id="tapBtn" class="group relative z-20 w-36 h-36 rounded-full bg-gradient-to-br from-surface-bright via-surface-container-high to-surface-dim flex items-center justify-center border-4 border-outline-variant/50 shadow-2xl active:scale-90 disabled:opacity-50">
+                        <span id="tapBtnText" class="font-display-race text-xl text-on-surface tracking-widest italic uppercase">TAP!</span>
+                    </button>
+                </div>
+
+                <!-- Austin's Progress -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <span id="scoreAustin" class="font-display-race text-2xl text-secondary-container">0</span>
+                        <span class="font-display-race text-sm italic text-secondary-container">AUSTIN</span>
+                    </div>
+                    <div class="h-3 w-full bg-surface-container-lowest glass-stroke rounded-full overflow-hidden p-0.5">
+                        <div id="fillAustin" class="h-full ml-auto bg-secondary-container rounded-full transition-all duration-300" style="width: 0%;"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Central Tap Area -->
-            <div class="relative flex justify-center items-center py-4">
-                <div class="absolute w-48 h-48 rounded-full border border-primary-fixed-dim/20 animate-pulse-ring"></div>
-                <div class="absolute w-56 h-56 rounded-full border border-secondary-container/10 animate-pulse-ring" style="animation-delay: 1s;"></div>
-                <button id="tapBtn" class="group relative z-20 w-44 h-44 rounded-full bg-gradient-to-br from-surface-bright via-surface-container-high to-surface-dim flex items-center justify-center border-4 border-outline-variant/50 shadow-2xl transition-all active:scale-90 disabled:opacity-50 disabled:grayscale">
-                    <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-primary-fixed-dim/20 to-secondary-container/20 opacity-40 blur-xl"></div>
-                    <div class="flex flex-col items-center">
-                        <span class="font-display-race text-headline-lg-mobile text-on-surface tracking-widest italic drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">TAP!</span>
-                        <span class="material-symbols-outlined text-primary-container group-active:text-secondary-container transition-colors">touch_app</span>
-                    </div>
-                </button>
+            <!-- Reaction View -->
+            <div id="view-reaction" class="hidden inset-0 flex flex-col items-center justify-center">
+                <div id="reaction-box" class="w-full max-w-sm aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center transition-colors duration-200">
+                    <span id="reaction-text" class="font-display-race text-4xl italic text-white uppercase">Wait...</span>
+                </div>
             </div>
 
-            <!-- Austin's Progress -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-end">
-                    <span id="scoreAustin" class="font-display-race text-headline-lg-mobile text-secondary-container drop-shadow-[0_0_10px_rgba(255,75,137,0.5)]">0</span>
-                    <div class="flex items-baseline gap-2">
-                        <span class="font-label-caps text-[10px] text-secondary-container/60 tracking-[0.2em]">P2</span>
-                        <span class="font-display-race text-headline-md italic text-secondary-container">AUSTIN</span>
-                    </div>
+            <!-- Grid Rush View -->
+            <div id="view-grid" class="hidden grid grid-cols-3 gap-4 h-[300px] w-full max-w-sm mx-auto">
+                <!-- Grid items generated by JS -->
+            </div>
+
+            <!-- Math View -->
+            <div id="view-math" class="hidden flex flex-col items-center gap-8">
+                <div id="math-problem" class="font-display-race text-6xl text-primary drop-shadow-[0_0_15px_#00f0ff]">5 + 3</div>
+                <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-2xl active:scale-95 transition-all">7</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-2xl active:scale-95 transition-all">8</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-2xl active:scale-95 transition-all">9</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-2xl active:scale-95 transition-all">6</button>
                 </div>
-                <div class="h-6 w-full bg-surface-container-lowest glass-stroke rounded-sm overflow-hidden p-1 relative">
-                    <div id="fillAustin" class="h-full ml-auto bg-gradient-to-l from-secondary-fixed-dim/40 to-secondary-container rounded-sm shadow-[0_0_15px_#ff4b89] transition-all duration-300" style="width: 0%;"></div>
-                </div>
+            </div>
+            
+            <!-- Timing View -->
+            <div id="view-timing" class="hidden flex flex-col items-center gap-6">
+                <div class="font-label-caps text-on-surface-variant uppercase tracking-widest">Target: 5.00s</div>
+                <div id="timer-display" class="font-display-race text-8xl text-secondary drop-shadow-[0_0_15px_#ff4b89]">0.00</div>
+                <button id="stop-timer-btn" class="w-48 py-4 rounded-xl bg-secondary text-on-secondary font-label-caps tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_#ff4b89]">STOP</button>
             </div>
         </div>
 
         <!-- Restart -->
-        <div class="mt-auto flex justify-center pt-8">
-            <button id="restartBtn" class="flex items-center gap-2 px-6 py-3 rounded-full bg-surface-container-high/40 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all active:scale-95">
-                <span class="material-symbols-outlined text-[18px]">refresh</span>
-                <span class="font-label-caps text-label-caps uppercase tracking-widest">RESTART RACE</span>
+        <div class="mt-auto flex justify-center pt-4">
+            <button id="restartBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high/40 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-[16px]">refresh</span>
+                <span class="font-label-caps text-[10px] uppercase tracking-widest">RESTART TOURNAMENT</span>
             </button>
         </div>
     </main>
@@ -308,16 +339,17 @@
     <div id="winner-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-container-margin">
         <div class="absolute inset-0 bg-background/80 backdrop-blur-xl"></div>
         <div class="relative w-full max-w-sm glass-stroke bg-surface-container/80 p-8 rounded-3xl text-center shadow-[0_0_50px_rgba(0,219,233,0.2)]">
-            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-primary-container rounded-full flex items-center justify-center border-4 border-surface shadow-[0_0_30px_#00f0ff]">
-                <span class="material-symbols-outlined text-on-secondary text-5xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-20 h-20 bg-primary-container rounded-full flex items-center justify-center border-4 border-surface shadow-[0_0_30px_#00f0ff]">
+                <span id="overlay-icon" class="material-symbols-outlined text-on-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
             </div>
-            <div class="mt-8 space-y-2">
-                <h2 class="font-display-race text-headline-lg-mobile text-primary italic uppercase">WINNER!</h2>
-                <p id="winnerText" class="font-body-md text-on-surface-variant text-sm">Someone dominated the circuit!</p>
+            <div class="mt-6 space-y-2">
+                <h2 id="overlay-title" class="font-display-race text-3xl text-primary italic uppercase">ROUND WINNER!</h2>
+                <p id="winnerText" class="font-body-md text-on-surface-variant text-sm">Parker took the round!</p>
             </div>
-            <div class="mt-8">
+            <div id="next-game-msg" class="mt-4 font-label-caps text-[10px] text-on-surface-variant animate-pulse">NEXT GAME IN 3...</div>
+            <div id="final-controls" class="hidden mt-8">
                 <button id="overlayRestartBtn" class="w-full py-4 rounded-xl bg-primary text-on-primary font-label-caps text-label-caps tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
-                    PLAY AGAIN
+                    RESTART TOURNAMENT
                 </button>
             </div>
         </div>
@@ -326,243 +358,293 @@
     <!-- Countdown Overlay -->
     <div id="countdown-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
         <div class="absolute inset-0 bg-background/60 backdrop-blur-md"></div>
-        <div id="countdown-text" class="relative font-display-race text-[120px] italic text-primary drop-shadow-[0_0_30px_#00f0ff] animate-bounce">3</div>
+        <div id="countdown-text" class="relative font-display-race text-[120px] italic text-primary drop-shadow-[0_0_30px_#00f0ff]">3</div>
     </div>
 
     <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container/80 backdrop-blur-2xl border-t border-glass-stroke shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-xl flex justify-around items-center h-20 px-4 pb-4">
-        <button class="flex flex-col items-center justify-center text-secondary drop-shadow-[0_0_10px_rgba(255,177,195,0.6)] active:scale-110 transition-transform duration-200">
+    <nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container/80 backdrop-blur-2xl border-t border-glass-stroke h-20 flex justify-around items-center px-4">
+        <button class="flex flex-col items-center justify-center text-secondary">
             <span class="material-symbols-outlined">sports_score</span>
-            <span class="font-label-caps text-label-caps">RACE</span>
+            <span class="font-label-caps text-[10px]">TOURNAMENT</span>
         </button>
-        <button class="flex flex-col items-center justify-center text-on-surface-variant/40 hover:text-secondary/60 active:scale-110 transition-transform duration-200">
-            <span class="material-symbols-outlined">directions_car</span>
-            <span class="font-label-caps text-label-caps">GARAGE</span>
-        </button>
-        <button class="flex flex-col items-center justify-center text-on-surface-variant/40 hover:text-secondary/60 active:scale-110 transition-transform duration-200">
-            <span class="material-symbols-outlined">leaderboard</span>
-            <span class="font-label-caps text-label-caps">STATS</span>
+        <button class="flex flex-col items-center justify-center text-on-surface-variant/40">
+            <span class="material-symbols-outlined">trophy</span>
+            <span class="font-label-caps text-[10px]">CHAMPIONS</span>
         </button>
     </nav>
 
     <script>
-        const WINNING_TAP_COUNT = 20;
-        const PEER_PREFIX = 'pa-race-';
+        const PEER_PREFIX = 'pa-gauntlet-';
+        const GAMES_TOTAL = 10;
+        
+        const GAME_MODES = [
+            { name: 'Speed Tap', icon: 'speed', goal: 30, desc: 'First to 30 taps!' },
+            { name: 'Reaction Duel', icon: 'bolt', desc: 'Tap when it turns RED!' },
+            { name: 'Tug of War', icon: 'sync_alt', goal: 10, desc: 'Pull to your side!' },
+            { name: 'Target Blitz', icon: 'target', goal: 8, desc: 'Pop 8 targets!' },
+            { name: 'Math Flash', icon: 'calculate', goal: 5, desc: 'Solve 5 problems!' },
+            { name: 'Color Crush', icon: 'palette', goal: 5, desc: 'Tap the COLOR, not word!' },
+            { name: 'Perfect Timing', icon: 'timer', desc: 'Stop closest to 5.00s!' },
+            { name: 'Charge Up', icon: 'battery_charging_full', desc: 'Hold to 95%, don\'t pop!' },
+            { name: 'Sequence', icon: 'order_play', goal: 4, desc: 'Repeat the pattern!' },
+            { name: 'Minefield', icon: 'bomb', goal: 3, desc: 'Avoid the hidden mine!' }
+        ];
 
         const setupScreen = document.getElementById('setup-screen');
         const raceScreen = document.getElementById('race-screen');
         const winnerOverlay = document.getElementById('winner-overlay');
         const countdownOverlay = document.getElementById('countdown-overlay');
         const countdownText = document.getElementById('countdown-text');
+        
+        const scoreP1El = document.getElementById('score-p1');
+        const scoreP2El = document.getElementById('score-p2');
+        const gameTitleEl = document.getElementById('game-title');
+        const gameIconEl = document.getElementById('game-icon');
+        const gameProgressEl = document.getElementById('game-progress');
 
-        const playerSelect = document.getElementById('playerSelect');
-        const hostBtn = document.getElementById('hostBtn');
-        const joinBtn = document.getElementById('joinBtn');
-        const hostCodeDisplay = document.getElementById('host-code-display');
-        const copyCodeBtn = document.getElementById('copyCodeBtn');
-
+        const tapBtn = document.getElementById('tapBtn');
+        const tapBtnText = document.getElementById('tapBtnText');
         const statusEl = document.getElementById('status');
         const connStatusEl = document.getElementById('connection-status');
-        const tapBtn = document.getElementById('tapBtn');
-        const restartBtn = document.getElementById('restartBtn');
-        const overlayRestartBtn = document.getElementById('overlayRestartBtn');
-        const winnerText = document.getElementById('winnerText');
 
-        const scoreParkerEl = document.getElementById('scoreParker');
-        const scoreAustinEl = document.getElementById('scoreAustin');
-        const fillParkerEl = document.getElementById('fillParker');
-        const fillAustinEl = document.getElementById('fillAustin');
+        const views = {
+            tapping: document.getElementById('view-tapping'),
+            reaction: document.getElementById('view-reaction'),
+            grid: document.getElementById('view-grid'),
+            math: document.getElementById('view-math'),
+            timing: document.getElementById('view-timing')
+        };
 
-        const joinInputs = [
-            document.getElementById('input-code-1'),
-            document.getElementById('input-code-2'),
-            document.getElementById('input-code-3'),
-            document.getElementById('input-code-4')
-        ];
+        let peer = null, conn = null;
+        let isHost = false, myName = 'Parker';
+        let tournamentScore = { Parker: 0, Austin: 0 };
+        let currentGameIndex = 0;
+        let gameState = { mode: 0, Parker: 0, Austin: 0, winner: null, inProgress: false, meta: {} };
 
-        joinInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length > 1) e.target.value = e.target.value.slice(-1);
-                if (e.target.value && index < 3) joinInputs[index + 1].focus();
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) joinInputs[index - 1].focus();
-            });
-        });
-
-        let peer = null;
-        let conn = null;
-        let isHost = false;
-        let myName = 'Parker';
-        let gameState = { Parker: 0, Austin: 0, winner: null, inProgress: false };
-        let currentRoomCode = '';
-
-        function setStatus(message, isError = false) {
-            statusEl.textContent = message;
-            statusEl.className = `text-center font-label-caps text-[12px] ${isError ? 'text-red-400' : 'text-on-surface-variant/60'} animate-pulse`;
+        function setStatus(msg, err = false) {
+            statusEl.textContent = msg;
+            statusEl.className = `text-center font-label-caps text-[12px] ${err ? 'text-red-400' : 'text-on-surface-variant/60'}`;
         }
 
-        function setConnectionStatus(status) {
-            connStatusEl.textContent = status;
-            connStatusEl.className = status === 'CONNECTED' 
-                ? 'text-primary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-primary/30 bg-primary/10 shadow-[0_0_10px_rgba(0,219,233,0.3)]'
-                : 'text-secondary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10';
+        function broadcastState() {
+            if (conn && conn.open && isHost) conn.send({ type: 'state', state: gameState, tournamentScore });
+        }
+
+        function onData(data) {
+            if (data.type === 'state') {
+                gameState = data.state;
+                tournamentScore = data.tournamentScore;
+                render();
+            } else if (data.type === 'action' && isHost) {
+                handleAction(data.action, data.player, data.val);
+            }
         }
 
         function render() {
-            scoreParkerEl.textContent = String(gameState.Parker);
-            scoreAustinEl.textContent = String(gameState.Austin);
-            fillParkerEl.style.width = `${Math.min(100, (gameState.Parker / WINNING_TAP_COUNT) * 100)}%`;
-            fillAustinEl.style.width = `${Math.min(100, (gameState.Austin / WINNING_TAP_COUNT) * 100)}%`;
+            const mode = GAME_MODES[gameState.mode];
+            gameTitleEl.textContent = mode.name;
+            gameIconEl.textContent = mode.icon;
+            gameProgressEl.textContent = `${currentGameIndex + 1} / ${GAMES_TOTAL}`;
+            scoreP1El.textContent = tournamentScore.Parker;
+            scoreP2El.textContent = tournamentScore.Austin;
+
+            document.getElementById('scoreParker').textContent = gameState.Parker;
+            document.getElementById('scoreAustin').textContent = gameState.Austin;
+            document.getElementById('fillParker').style.width = `${(gameState.Parker / (mode.goal || 1)) * 100}%`;
+            document.getElementById('fillAustin').style.width = `${(gameState.Austin / (mode.goal || 1)) * 100}%`;
+
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+            if ([0, 2, 7, 8, 9].includes(gameState.mode)) views.tapping.classList.remove('hidden');
+            else if (gameState.mode === 1) views.reaction.classList.remove('hidden');
+            else if (gameState.mode === 3 || gameState.mode === 9) views.grid.classList.remove('hidden');
+            else if (gameState.mode === 4 || gameState.mode === 5) views.math.classList.remove('hidden');
+            else if (gameState.mode === 6) views.timing.classList.remove('hidden');
 
             if (gameState.winner) {
-                winnerText.textContent = `${gameState.winner.toUpperCase()} dominated the circuit!`;
+                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} takes the round!`;
                 winnerOverlay.classList.remove('hidden');
                 tapBtn.disabled = true;
             } else {
                 winnerOverlay.classList.add('hidden');
                 tapBtn.disabled = !gameState.inProgress;
             }
-        }
 
-        function broadcastState() {
-            if (conn && conn.open && isHost) {
-                conn.send({ type: 'state', state: gameState });
+            if (gameState.mode === 1 && gameState.inProgress) {
+                const box = document.getElementById('reaction-box');
+                const text = document.getElementById('reaction-text');
+                if (gameState.meta.ready) {
+                    box.classList.add('bg-primary-container');
+                    text.textContent = 'TAP NOW!';
+                } else {
+                    box.classList.remove('bg-primary-container');
+                    text.textContent = 'Wait...';
+                }
+            }
+            
+            if ((gameState.mode === 4 || gameState.mode === 5) && gameState.inProgress) {
+                document.getElementById('math-problem').textContent = gameState.meta.problem || '';
+                const opts = document.querySelectorAll('.math-opt');
+                (gameState.meta.options || []).forEach((opt, i) => {
+                    if (opts[i]) {
+                        opts[i].textContent = opt;
+                        opts[i].onclick = () => sendAction('math-ans', opt);
+                    }
+                });
+            }
+
+            if (gameState.mode === 6) {
+                const time = gameState.meta.time || 0;
+                document.getElementById('timer-display').textContent = time.toFixed(2);
+                document.getElementById('stop-timer-btn').onclick = () => sendAction('stop-timer');
             }
         }
 
-        async function startCountdown() {
-            gameState.inProgress = false;
+        function sendAction(name, val = null) {
+            if (!gameState.inProgress) return;
+            if (isHost) handleAction(name, myName, val);
+            else conn.send({ type: 'action', action: name, player: myName, val });
+        }
+
+        function handleAction(name, player, val) {
+            if (!gameState.inProgress) return;
+            
+            if (name === 'tap') {
+                if (gameState.mode === 0) {
+                    gameState[player]++;
+                    if (gameState[player] >= GAME_MODES[0].goal) endRound(player);
+                } else if (gameState.mode === 2) {
+                    const change = player === 'Parker' ? 1 : -1;
+                    gameState.meta.tug = (gameState.meta.tug || 0) + change;
+                    if (Math.abs(gameState.meta.tug) >= GAME_MODES[2].goal) endRound(gameState.meta.tug > 0 ? 'Parker' : 'Austin');
+                } else if (gameState.mode === 1) {
+                    if (gameState.meta.ready) endRound(player);
+                }
+            } else if (name === 'math-ans') {
+                if (val === gameState.meta.answer) {
+                    gameState[player]++;
+                    if (gameState[player] >= GAME_MODES[gameState.mode].goal) endRound(player);
+                    else generateMath();
+                }
+            } else if (name === 'stop-timer') {
+                gameState.meta.stopped = gameState.meta.stopped || {};
+                gameState.meta.stopped[player] = gameState.meta.time;
+                if (Object.keys(gameState.meta.stopped).length === 2) {
+                    const d1 = Math.abs(gameState.meta.stopped.Parker - 5);
+                    const d2 = Math.abs(gameState.meta.stopped.Austin - 5);
+                    endRound(d1 < d2 ? 'Parker' : 'Austin');
+                }
+            }
+            broadcastState();
             render();
+        }
+
+        function generateMath() {
+            const a = Math.floor(Math.random() * 20), b = Math.floor(Math.random() * 20);
+            const ans = a + b;
+            const opts = [ans, ans + 2, ans - 3, ans + 5].sort(() => Math.random() - 0.5);
+            gameState.meta.problem = `${a} + ${b}`;
+            gameState.meta.answer = ans;
+            gameState.meta.options = opts;
+        }
+
+        async function startRound() {
+            gameState.Parker = 0; gameState.Austin = 0; gameState.winner = null; gameState.inProgress = false;
+            gameState.meta = {};
+            render();
+            broadcastState();
+
             countdownOverlay.classList.remove('hidden');
             for (let i = 3; i > 0; i--) {
                 countdownText.textContent = i;
-                await new Promise(r => setTimeout(r, 1000));
+                await new Promise(r => setTimeout(r, 800));
             }
-            countdownText.textContent = "GO!";
-            await new Promise(r => setTimeout(r, 500));
             countdownOverlay.classList.add('hidden');
             gameState.inProgress = true;
-            render();
-            if (isHost) broadcastState();
-        }
-
-        function resetGame() {
-            gameState = { Parker: 0, Austin: 0, winner: null, inProgress: false };
-            render();
-            if (isHost) {
-                broadcastState();
-                startCountdown();
-            }
-        }
-
-        function onData(data) {
-            if (data.type === 'state') {
-                gameState = data.state;
-                render();
-            } else if (data.type === 'tap' && isHost) {
-                const opponent = myName === 'Parker' ? 'Austin' : 'Parker';
-                if (!gameState.winner && gameState.inProgress) {
-                    gameState[opponent]++;
-                    if (gameState[opponent] >= WINNING_TAP_COUNT) {
-                        gameState.winner = opponent;
-                        gameState.inProgress = false;
+            
+            if (gameState.mode === 1) {
+                setTimeout(() => {
+                    if (gameState.inProgress) {
+                        gameState.meta.ready = true;
+                        broadcastState();
+                        render();
                     }
-                    render();
+                }, 2000 + Math.random() * 3000);
+            } else if (gameState.mode === 4 || gameState.mode === 5) {
+                generateMath();
+            } else if (gameState.mode === 6) {
+                gameState.meta.time = 0;
+                const timer = setInterval(() => {
+                    if (!gameState.inProgress || gameState.winner) { clearInterval(timer); return; }
+                    gameState.meta.time += 0.05;
                     broadcastState();
-                }
-            } else if (data.type === 'restart' && isHost) {
-                resetGame();
+                    render();
+                }, 50);
             }
-        }
-
-        function initConnection() {
-            conn.on('open', () => {
-                setupScreen.classList.remove('active');
-                raceScreen.classList.add('active');
-                setConnectionStatus('CONNECTED');
-                if (isHost) resetGame();
-            });
-            conn.on('data', onData);
-            conn.on('close', () => {
-                setConnectionStatus('DISCONNECTED');
-                location.reload();
-            });
-        }
-
-        hostBtn.addEventListener('click', () => {
-            myName = playerSelect.value;
-            isHost = true;
-            const code = Math.floor(1000 + Math.random() * 9000).toString();
-            currentRoomCode = code;
             
-            peer = new Peer(PEER_PREFIX + code);
-            peer.on('open', (id) => {
-                setStatus('Room created. share the code!');
-                hostBtn.classList.add('hidden');
-                hostCodeDisplay.classList.remove('hidden');
-                code.split('').forEach((num, i) => {
-                    document.getElementById(`code-${i+1}`).textContent = num;
-                });
-            });
-            peer.on('connection', (c) => {
-                conn = c;
-                initConnection();
-            });
-            peer.on('error', (err) => {
-                if (err.type === 'unavailable-id') {
-                    setStatus('Code collision. Try again!', true);
+            broadcastState();
+            render();
+        }
+
+        function endRound(winner) {
+            gameState.winner = winner;
+            gameState.inProgress = false;
+            tournamentScore[winner]++;
+            broadcastState();
+            render();
+
+            setTimeout(() => {
+                if (currentGameIndex < GAMES_TOTAL - 1) {
+                    currentGameIndex++;
+                    gameState.mode = (gameState.mode + 1) % GAME_MODES.length;
+                    startRound();
                 } else {
-                    setStatus('Error: ' + err.type, true);
+                    const finalWinner = tournamentScore.Parker > tournamentScore.Austin ? 'Parker' : 'Austin';
+                    document.getElementById('overlay-title').textContent = 'TOURNAMENT OVER!';
+                    document.getElementById('winnerText').textContent = `${finalWinner.toUpperCase()} IS THE GRAND CHAMPION!`;
+                    document.getElementById('next-game-msg').classList.add('hidden');
+                    document.getElementById('final-controls').classList.remove('hidden');
                 }
-            });
-        });
+            }, 4000);
+        }
 
-        joinBtn.addEventListener('click', () => {
-            myName = playerSelect.value;
-            isHost = false;
-            const code = joinInputs.map(i => i.value).join('');
-            if (code.length !== 4) {
-                setStatus('Enter 4 digits!', true);
-                return;
-            }
-            
+        document.getElementById('hostBtn').onclick = () => {
+            myName = playerSelect.value; isHost = true;
+            const code = Math.floor(1000 + Math.random() * 9000).toString();
+            peer = new Peer(PEER_PREFIX + code);
+            peer.on('open', () => {
+                document.getElementById('host-code-display').classList.remove('hidden');
+                code.split('').forEach((n, i) => document.getElementById(`code-${i+1}`).textContent = n);
+                setStatus('Room created!');
+            });
+            peer.on('connection', c => { conn = c; initConn(); });
+        };
+
+        document.getElementById('joinBtn').onclick = () => {
+            myName = playerSelect.value; isHost = false;
+            const code = [1,2,3,4].map(i => document.getElementById(`input-code-${i}`).value).join('');
             peer = new Peer();
             peer.on('open', () => {
                 conn = peer.connect(PEER_PREFIX + code);
-                initConnection();
-                setStatus('Connecting to ' + code + '...');
+                initConn();
             });
-            peer.on('error', (err) => {
-                setStatus('Join Error: ' + err.type, true);
-            });
-        });
-
-        tapBtn.addEventListener('click', () => {
-            if (!gameState.inProgress || gameState.winner) return;
-            if (isHost) {
-                gameState[myName]++;
-                if (gameState[myName] >= WINNING_TAP_COUNT) {
-                    gameState.winner = myName;
-                    gameState.inProgress = false;
-                }
-                render();
-                broadcastState();
-            } else {
-                conn.send({ type: 'tap' });
-            }
-        });
-
-        const handleRestart = () => {
-            if (isHost) resetGame();
-            else conn.send({ type: 'restart' });
         };
 
-        restartBtn.addEventListener('click', handleRestart);
-        overlayRestartBtn.addEventListener('click', handleRestart);
-        copyCodeBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(currentRoomCode);
-            setStatus('Code copied!');
+        function initConn() {
+            conn.on('open', () => {
+                setupScreen.classList.remove('active');
+                raceScreen.classList.add('active');
+                if (isHost) startRound();
+            });
+            conn.on('data', onData);
+        }
+
+        tapBtn.onclick = () => sendAction('tap');
+        document.getElementById('restartBtn').onclick = () => location.reload();
+        document.getElementById('overlayRestartBtn').onclick = () => location.reload();
+        
+        [1,2,3,4].forEach(i => {
+            const el = document.getElementById(`input-code-${i}`);
+            el.oninput = () => { if (el.value && i < 4) document.getElementById(`input-code-${i+1}`).focus(); };
         });
     </script>
 </body>
