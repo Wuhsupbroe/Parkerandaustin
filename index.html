@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breck Smells 💀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #000;
+      overflow-x: hidden;
+      font-family: 'Black Ops One', sans-serif;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── SECTION 1 ─────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      user-select: none;
+    }
+
+    .main-text {
+      font-size: clamp(4rem, 14vw, 14rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      background: linear-gradient(90deg,
+        #ff0080, #ff8c00, #ffff00, #00ff88,
+        #00cfff, #a855f7, #ff0080);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: rainbow 3s linear infinite, flicker 4s ease-in-out infinite, wobble 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px #ff0080) drop-shadow(0 0 60px #a855f7);
+      text-transform: uppercase;
+    }
+
+    @keyframes rainbow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+    @keyframes flicker {
+      0%, 95%, 100% { opacity: 1; }
+      96% { opacity: 0.4; }
+      97% { opacity: 1; }
+      98% { opacity: 0.2; }
+      99% { opacity: 1; }
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-1deg) scale(1); }
+      25% { transform: rotate(1deg) scale(1.02); }
+      50% { transform: rotate(-0.5deg) scale(0.99); }
+      75% { transform: rotate(1.5deg) scale(1.01); }
+    }
+
+    .stink-line {
+      font-size: clamp(2rem, 6vw, 6rem);
+      margin-top: 1rem;
+      animation: floatEmoji 2s ease-in-out infinite;
+      letter-spacing: 0.2em;
+    }
+    @keyframes floatEmoji {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .subtitle {
+      font-size: clamp(0.9rem, 2.5vw, 2rem);
+      color: #ccc;
+      margin-top: 1.5rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+      text-shadow: 0 0 10px #a855f7, 0 0 30px #a855f7;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.4);
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+    .scroll-hint::after {
+      content: '▼';
+      display: block;
+      text-align: center;
+      margin-top: 4px;
+      font-size: 1.2rem;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.4; }
+      50% { transform: translateX(-50%) translateY(8px); opacity: 1; }
+    }
+
+    /* ── SECTION 2 ─────────────────────────────────────────── */
+    #fortnite {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1rem;
+      background: linear-gradient(180deg, #000 0%, #0a0010 40%, #0d0005 100%);
+    }
+
+    .fn-title {
+      font-size: clamp(2rem, 7vw, 6rem);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      background: linear-gradient(90deg, #00d4ff, #9b59b6, #00d4ff);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fnRainbow 4s linear infinite;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 15px #00d4ff);
+    }
+    @keyframes fnRainbow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    .fn-subtitle {
+      font-size: clamp(0.8rem, 2vw, 1.4rem);
+      color: #888;
+      text-align: center;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    /* Stats card */
+    .stats-card {
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0d2e 50%, #0d1a0d 100%);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      width: min(600px, 92vw);
+      box-shadow: 0 0 40px rgba(0,212,255,0.1), 0 0 80px rgba(155,89,182,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .stats-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0,212,255,0.02) 2px,
+        rgba(0,212,255,0.02) 4px
+      );
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      padding-bottom: 1.2rem;
+    }
+
+    /* ── Bronze badge ── */
+    .badge-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .badge-svg {
+      width: 80px;
+      height: 80px;
+      animation: badgeSad 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(180, 90, 20, 0.8));
+    }
+    @keyframes badgeSad {
+      0%, 100% { transform: rotate(-5deg) scale(1); filter: drop-shadow(0 0 12px rgba(180,90,20,0.8)); }
+      25%  { transform: rotate(5deg) scale(1.05); filter: drop-shadow(0 0 20px rgba(180,90,20,1)); }
+      50%  { transform: rotate(-3deg) scale(0.97); filter: drop-shadow(0 0 6px rgba(180,90,20,0.4)); }
+      75%  { transform: rotate(3deg) scale(1.02); }
+    }
+    .badge-label {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #7c3b0a;
+      color: #ffb347;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      border: 1px solid #c2651a;
+    }
+
+    .card-player {
+      flex: 1;
+    }
+    .player-name {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      color: #fff;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 10px rgba(0,212,255,0.5);
+    }
+    .player-tag {
+      font-size: 0.85rem;
+      color: #555;
+      letter-spacing: 0.2em;
+      margin-top: 2px;
+    }
+    .rank-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3b0a, #c2651a, #7c3b0a);
+      background-size: 200% 100%;
+      color: #ffe0a0;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+      text-transform: uppercase;
+      border: 1px solid #c2651a;
+      animation: bronzeShimmer 3s linear infinite;
+    }
+    @keyframes bronzeShimmer {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* Stat rows */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .stat-box:hover { border-color: rgba(0,212,255,0.3); }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: #555;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: #fff;
+    }
+    .stat-value.bad  { color: #ff4444; text-shadow: 0 0 10px #ff4444; }
+    .stat-value.meh  { color: #ff8c00; text-shadow: 0 0 10px #ff8c00; }
+    .stat-value.lol  { color: #ffff00; text-shadow: 0 0 10px #ffff00; }
+    .stat-sub {
+      font-size: 0.65rem;
+      color: #444;
+      margin-top: 2px;
+      letter-spacing: 0.1em;
+    }
+
+    /* XP bar */
+    .xp-section { margin-bottom: 1.5rem; }
+    .xp-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #555;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .xp-bar-bg {
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      height: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7c3b0a, #c2651a, #ffb347);
+      border-radius: 999px;
+      animation: xpFill 2.5s 0.5s ease-out forwards;
+      box-shadow: 0 0 8px #c2651a;
+    }
+    @keyframes xpFill {
+      to { width: 11%; } /* barely into Bronze I — pathetic */
+    }
+    .xp-bar-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.2em;
+    }
+    .next-rank {
+      font-size: 0.65rem;
+      color: #333;
+      text-align: right;
+      margin-top: 4px;
+      letter-spacing: 0.1em;
+    }
+    .next-rank span { color: #555; }
+
+    /* Roast quote */
+    .roast-box {
+      background: rgba(255, 60, 60, 0.05);
+      border: 1px solid rgba(255,60,60,0.15);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .roast-box::before {
+      content: '"';
+      position: absolute;
+      top: -10px; left: 12px;
+      font-size: 3rem;
+      color: rgba(255,60,60,0.3);
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .roast-text {
+      font-size: clamp(0.75rem, 2vw, 1rem);
+      color: #cc4444;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      animation: roastCycle 12s ease-in-out infinite;
+    }
+    @keyframes roastCycle {
+      0%,30%   { opacity: 1; }
+      33%,63%  { opacity: 0; }
+      66%,96%  { opacity: 1; }
+      100%     { opacity: 1; }
+    }
+
+    /* Rank ladder */
+    .rank-ladder {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      width: min(600px, 92vw);
+    }
+
+    .rank-tier {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+    .rank-bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+    .rank-bar.active { opacity: 1; animation: barPulse 1.5s ease-in-out infinite; }
+    @keyframes barPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .rank-name {
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+      text-align: center;
+    }
+    .rank-name.active { color: #c2651a; }
+    .rank-icon { font-size: 1rem; }
+
+    /* Crying Breck */
+    .crying-section {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .cry-emoji {
+      font-size: clamp(3rem, 8vw, 6rem);
+      animation: cryShake 0.5s ease-in-out infinite;
+      display: inline-block;
+    }
+    @keyframes cryShake {
+      0%, 100% { transform: translateX(-3px) rotate(-5deg); }
+      50%  { transform: translateX(3px) rotate(5deg); }
+    }
+    .cry-caption {
+      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+      color: #444;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    /* Floating emojis */
+    .floating-emoji {
+      position: fixed;
+      font-size: 2.5rem;
+      pointer-events: none;
+      z-index: 5;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-150px) rotate(720deg); opacity: 0; }
+    }
+
+    /* Neon border */
+    .neon-border {
+      position: fixed;
+      inset: 8px;
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 1;
+      border: 2px solid transparent;
+      animation: borderGlow 3s linear infinite;
+    }
+    @keyframes borderGlow {
+      0%   { box-shadow: 0 0 10px #ff0080, 0 0 30px #ff0080, inset 0 0 10px #ff0080; border-color: #ff0080; }
+      16%  { box-shadow: 0 0 10px #ff8c00, 0 0 30px #ff8c00, inset 0 0 10px #ff8c00; border-color: #ff8c00; }
+      33%  { box-shadow: 0 0 10px #ffff00, 0 0 30px #ffff00, inset 0 0 10px #ffff00; border-color: #ffff00; }
+      50%  { box-shadow: 0 0 10px #00ff88, 0 0 30px #00ff88, inset 0 0 10px #00ff88; border-color: #00ff88; }
+      66%  { box-shadow: 0 0 10px #00cfff, 0 0 30px #00cfff, inset 0 0 10px #00cfff; border-color: #00cfff; }
+      83%  { box-shadow: 0 0 10px #a855f7, 0 0 30px #a855f7, inset 0 0 10px #a855f7; border-color: #a855f7; }
+      100% { box-shadow: 0 0 10px #ff0080, 0 0 30px #ff0080, inset 0 0 10px #ff0080; border-color: #ff0080; }
+    }
+
+    /* ── SECRET BUTTON ──────────────────────────────────────── */
+    #secret-btn {
+      position: fixed;
+      bottom: 12px;
+      right: 16px;
+      z-index: 50;
+      background: none;
+      border: none;
+      cursor: default;
+      padding: 6px;
+      font-size: 0.75rem;
+      color: rgba(160, 160, 160, 0.55);
+      letter-spacing: 0.1em;
+      user-select: none;
+      opacity: 0.45;
+      transition: opacity 0.3s;
+      font-family: monospace;
+      line-height: 1;
+    }
+    /* slightly more visible on hover, still subtle */
+    #secret-btn:hover { opacity: 0.65; cursor: default; }
+
+    /* ── WHOLESOME OVERLAY ──────────────────────────────────── */
+    #wholesome {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #fffef9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-y: auto;
+      padding: 3rem 1.5rem 4rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.97);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      font-family: 'Lora', Georgia, serif;
+    }
+    #wholesome.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: scale(1);
+    }
+
+    .ws-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.4rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #bbb;
+      cursor: pointer;
+      font-family: sans-serif;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .ws-close:hover { color: #888; }
+
+    .ws-inner {
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .ws-stars {
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
+      margin-bottom: 1.2rem;
+      animation: wsStarFloat 3s ease-in-out infinite;
+      display: inline-block;
+    }
+    @keyframes wsStarFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .ws-title {
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 600;
+      color: #2c2c2c;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .ws-tagline {
+      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+      color: #aaa;
+      font-style: italic;
+      margin-bottom: 2.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .ws-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #d4a8c7, transparent);
+      margin: 0 auto 2.5rem;
+      border: none;
+    }
+
+    /* Cards grid */
+    .ws-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+
+    .ws-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.4rem 1.5rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      border: 1px solid #f0ebe8;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .ws-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .ws-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .ws-card.pink::before   { background: linear-gradient(90deg, #f9a8d4, #fda4af); }
+    .ws-card.blue::before   { background: linear-gradient(90deg, #93c5fd, #a5b4fc); }
+    .ws-card.green::before  { background: linear-gradient(90deg, #86efac, #6ee7b7); }
+    .ws-card.gold::before   { background: linear-gradient(90deg, #fcd34d, #fdba74); }
+    .ws-card.purple::before { background: linear-gradient(90deg, #d8b4fe, #f0abfc); }
+    .ws-card.sky::before    { background: linear-gradient(90deg, #7dd3fc, #67e8f9); }
+
+    .ws-card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+    .ws-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.4rem;
+      font-family: 'Lora', Georgia, serif;
+    }
+    .ws-card-body {
+      font-size: 0.9rem;
+      color: #777;
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    /* Big quote */
+    .ws-quote-wrap {
+      background: #fff8f5;
+      border-radius: 16px;
+      padding: 2rem 2.2rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid #f3e8e0;
+      position: relative;
+    }
+    .ws-quote-wrap::before {
+      content: '\201C';
+      position: absolute;
+      top: -0.5rem; left: 1.2rem;
+      font-size: 5rem;
+      color: #f9a8d4;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .ws-quote-text {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: #555;
+      line-height: 1.75;
+      font-style: italic;
+    }
+    .ws-quote-attr {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #ccc;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-style: normal;
+      font-family: sans-serif;
+    }
+
+    /* Sign-off */
+    .ws-signoff {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      color: #aaa;
+      font-style: italic;
+      margin-top: 1rem;
+      line-height: 1.7;
+    }
+    .ws-signoff strong {
+      color: #888;
+      font-style: normal;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* ── SECTION 3: HEIGHT ──────────────────────────────────── */
+    #height {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1rem 5rem;
+      background: linear-gradient(180deg, #0d0005 0%, #001a00 50%, #000d00 100%);
+    }
+
+    .ht-title {
+      font-size: clamp(2rem, 7vw, 6rem);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      background: linear-gradient(90deg, #39ff14, #ffff00, #39ff14);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: htRainbow 3s linear infinite;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 15px #39ff14);
+    }
+    @keyframes htRainbow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    .ht-subtitle {
+      font-size: clamp(0.8rem, 2vw, 1.4rem);
+      color: #888;
+      text-align: center;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── Measuring tape ── */
+    .tape-wrap {
+      width: min(640px, 92vw);
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    .tape-svg { width: 100%; height: auto; display: block; }
+
+    /* tape fill line animation */
+    .tape-fill {
+      stroke-dasharray: 580;
+      stroke-dashoffset: 580;
+    }
+    .tape-fill.animate {
+      animation: tapeDraw 2s 0.3s ease-out forwards;
+    }
+    @keyframes tapeDraw { to { stroke-dashoffset: 0; } }
+
+    .tape-marker {
+      opacity: 0;
+    }
+    .tape-marker.animate {
+      animation: markerPop 0.4s 2.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes markerPop {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Height comparison chart ── */
+    .chart-wrap {
+      width: min(660px, 92vw);
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(57,255,20,0.12);
+      border-radius: 16px;
+      padding: 1.5rem 1.5rem 0;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg, transparent, transparent 2px,
+        rgba(57,255,20,0.015) 2px, rgba(57,255,20,0.015) 3px
+      );
+      pointer-events: none;
+    }
+
+    .chart-grid {
+      display: flex;
+      align-items: flex-end;
+      gap: clamp(6px, 2vw, 18px);
+      height: 360px;
+      padding-bottom: 0;
+      position: relative;
+    }
+
+    /* ruler lines on left */
+    .chart-grid::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: rgba(57,255,20,0.15);
+    }
+
+    .chart-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      transform-origin: bottom;
+      transform: scaleY(0);
+      transition: transform 1s cubic-bezier(0.34,1.2,0.64,1);
+      position: relative;
+    }
+    .chart-bar.grow { transform: scaleY(1); }
+
+    /* Breck bar pulses red */
+    .chart-bar.breck-bar {
+      background: linear-gradient(180deg, #ff4444, #aa0000);
+      box-shadow: 0 0 16px #ff4444, 0 0 40px rgba(255,68,68,0.3);
+      animation: breckPulse 1s ease-in-out infinite;
+    }
+    @keyframes breckPulse {
+      0%, 100% { box-shadow: 0 0 16px #ff4444, 0 0 40px rgba(255,68,68,0.3); }
+      50%       { box-shadow: 0 0 30px #ff4444, 0 0 70px rgba(255,68,68,0.6); }
+    }
+
+    .chart-emoji {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      margin-bottom: 4px;
+      animation: emojiFloat 2s ease-in-out infinite;
+    }
+    @keyframes emojiFloat {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-5px); }
+    }
+
+    .chart-label {
+      font-size: clamp(0.45rem, 1.2vw, 0.65rem);
+      color: #666;
+      text-align: center;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 8px;
+      padding-bottom: 12px;
+      line-height: 1.3;
+    }
+    .chart-label.breck-lbl { color: #ff4444; }
+
+    .chart-ht {
+      font-size: clamp(0.5rem, 1.3vw, 0.7rem);
+      color: #444;
+      margin-top: 2px;
+    }
+    .chart-ht.breck-ht { color: #ff6666; font-size: clamp(0.55rem, 1.4vw, 0.75rem); }
+
+    /* Ruler tick marks on right side */
+    .ruler-aside {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0 0 0 6px;
+      pointer-events: none;
+    }
+    .ruler-tick {
+      font-size: 0.45rem;
+      color: rgba(57,255,20,0.3);
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    /* ── Height stat pills ── */
+    .ht-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      width: min(660px, 92vw);
+      margin-bottom: 2rem;
+    }
+    .ht-pill {
+      background: rgba(57,255,20,0.05);
+      border: 1px solid rgba(57,255,20,0.15);
+      border-radius: 10px;
+      padding: 0.7rem 1.1rem;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+      max-width: 180px;
+    }
+    .pill-val {
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      color: #39ff14;
+      text-shadow: 0 0 10px #39ff14;
+    }
+    .pill-val.red { color: #ff4444; text-shadow: 0 0 10px #ff4444; }
+    .pill-lbl {
+      font-size: 0.6rem;
+      color: #444;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    /* ── Height roast box ── */
+    .ht-roast-box {
+      background: rgba(57,255,20,0.04);
+      border: 1px solid rgba(57,255,20,0.12);
+      border-radius: 10px;
+      padding: 1rem 1.4rem;
+      width: min(660px, 92vw);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .ht-roast-box::before {
+      content: '"';
+      position: absolute;
+      top: -10px; left: 12px;
+      font-size: 3rem;
+      color: rgba(57,255,20,0.2);
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .ht-roast-text {
+      font-size: clamp(0.75rem, 2vw, 1rem);
+      color: #2ecc40;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+    }
+
+    /* ── Tiny Breck conclusion ── */
+    .tiny-conclusion {
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    .tiny-emoji {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      display: inline-block;
+      animation: tinyBounce 0.8s ease-in-out infinite;
+    }
+    @keyframes tinyBounce {
+      0%,100% { transform: scaleY(1) scaleX(1); }
+      30%     { transform: scaleY(1.15) scaleX(0.9); }
+      60%     { transform: scaleY(0.85) scaleX(1.1); }
+    }
+    .tiny-caption {
+      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+      color: #2a4a2a;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+<div class="neon-border"></div>
+<div class="scanlines"></div>
+
+<!-- ── SECTION 1: Breck Smells ── -->
+<section id="hero">
+  <div class="stink-line">💀💨🤢💩🦨</div>
+  <div class="main-text">BRECK<br>SMELLS</div>
+  <div class="stink-line">🦨💩🤢💨💀</div>
+  <div class="subtitle">and everyone knows it 😂</div>
+  <div class="scroll-hint">scroll for more pain</div>
+</section>
+
+<!-- ── SECTION 2: Fortnite Roast ── -->
+<section id="fortnite">
+
+  <div class="fn-title">🎮 Fortnite Career 🎮</div>
+  <div class="fn-subtitle">a tragedy in one act</div>
+
+  <!-- Rank ladder visual -->
+  <div class="rank-ladder" id="rankLadder">
+    <div class="rank-tier">
+      <div class="rank-bar active" style="height:24px;background:linear-gradient(#c2651a,#7c3b0a);"></div>
+      <div class="rank-icon">🥉</div>
+      <div class="rank-name active">Bronze<br>← HE IS</div>
+    </div>
+    <div class="rank-tier">
+      <div class="rank-bar" style="height:40px;background:linear-gradient(#aaa,#666);"></div>
+      <div class="rank-icon">🥈</div>
+      <div class="rank-name">Silver<br>(LOL)</div>
+    </div>
+    <div class="rank-tier">
+      <div class="rank-bar" style="height:58px;background:linear-gradient(#ffd700,#b8860b);"></div>
+      <div class="rank-icon">🥇</div>
+      <div class="rank-name">Gold<br>(Dream on)</div>
+    </div>
+    <div class="rank-tier">
+      <div class="rank-bar" style="height:76px;background:linear-gradient(#00cfff,#0080aa);"></div>
+      <div class="rank-icon">💎</div>
+      <div class="rank-name">Platinum<br>(Never)</div>
+    </div>
+    <div class="rank-tier">
+      <div class="rank-bar" style="height:94px;background:linear-gradient(#a855f7,#6b21a8);"></div>
+      <div class="rank-icon">💠</div>
+      <div class="rank-name">Diamond<br>(LOL x2)</div>
+    </div>
+    <div class="rank-tier">
+      <div class="rank-bar" style="height:112px;background:linear-gradient(#ff8c00,#ff0080);"></div>
+      <div class="rank-icon">👑</div>
+      <div class="rank-name">Elite<br>(In another<br>life)</div>
+    </div>
+  </div>
+
+  <!-- Stats card -->
+  <div class="stats-card">
+
+    <div class="card-header">
+      <div class="badge-wrap">
+        <!-- Hand-drawn SVG bronze badge -->
+        <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bronzeGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%"   stop-color="#e8873a"/>
+              <stop offset="50%"  stop-color="#b85c18"/>
+              <stop offset="100%" stop-color="#6b2e08"/>
+            </radialGradient>
+            <radialGradient id="bronzeShine" cx="35%" cy="30%" r="40%">
+              <stop offset="0%"   stop-color="rgba(255,200,120,0.6)"/>
+              <stop offset="100%" stop-color="rgba(255,200,120,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Outer ring -->
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#7c3b0a" stroke-width="4"/>
+          <!-- Main disc -->
+          <circle cx="50" cy="50" r="42" fill="url(#bronzeGrad)"/>
+          <!-- Shine -->
+          <circle cx="50" cy="50" r="42" fill="url(#bronzeShine)"/>
+          <!-- Roman numeral I = Bronze I -->
+          <text x="50" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="bold" fill="#ffcc80" opacity="0.9">I</text>
+          <!-- "BRONZE" text -->
+          <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" letter-spacing="2" fill="#ffaa50" opacity="0.8">BRONZE</text>
+          <!-- Sad face crack -->
+          <path d="M 30 72 Q 50 65 70 72" stroke="#5a2008" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="36" cy="67" r="2.5" fill="#5a2008"/>
+          <circle cx="64" cy="67" r="2.5" fill="#5a2008"/>
+          <!-- Tear drops -->
+          <ellipse cx="36" cy="72" rx="1.5" ry="3" fill="#7aa0d4" opacity="0.7"/>
+          <ellipse cx="64" cy="72" rx="1.5" ry="3" fill="#7aa0d4" opacity="0.7"/>
+          <!-- Outer glow ring -->
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#c2651a" stroke-width="1.5" opacity="0.5"/>
+        </svg>
+        <div class="badge-label">Peak Rank</div>
+      </div>
+
+      <div class="card-player">
+        <div class="player-name">Breck</div>
+        <div class="player-tag">#CARRIED · Season ∞</div>
+        <div class="rank-badge">🥉 Bronze I — Peak Performance</div>
+      </div>
+    </div>
+
+    <!-- Roast quote (cycles) -->
+    <div class="roast-box">
+      <div class="roast-text" id="roastText">
+        "Peaked at Bronze I. Even the bots felt bad. Two of them stopped shooting out of pity."
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Win Rate</div>
+        <div class="stat-value bad">0.3%</div>
+        <div class="stat-sub">Margin of error: 0.3%</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">K/D Ratio</div>
+        <div class="stat-value bad">0.12</div>
+        <div class="stat-sub">More D than K, obviously</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Avg Placement</div>
+        <div class="stat-value meh">#87 / 100</div>
+        <div class="stat-sub">Top 90% (bottom)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Hours Played</div>
+        <div class="stat-value lol">847 hrs</div>
+        <div class="stat-sub">Bronze after all that 💀</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Peak Rank</div>
+        <div class="stat-value" style="color:#c2651a;text-shadow:0 0 10px #c2651a;">Bronze I</div>
+        <div class="stat-sub">Career highlight</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Eliminations</div>
+        <div class="stat-value bad">3</div>
+        <div class="stat-sub">All were AFK players</div>
+      </div>
+    </div>
+
+    <!-- XP progress bar -->
+    <div class="xp-section">
+      <div class="xp-label">
+        <span>Bronze I</span>
+        <span>Progress to Silver IV (lol)</span>
+      </div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill"></div>
+        <div class="xp-bar-text">11% · Keep dreaming</div>
+      </div>
+      <div class="next-rank">Est. time to Silver: <span>Never</span></div>
+    </div>
+
+  </div>
+
+  <!-- Crying section -->
+  <div class="crying-section" style="margin-top:2rem;">
+    <div class="cry-emoji">😭🎮💀</div>
+    <div class="cry-caption">847 hours. Bronze. Let that sink in.</div>
+  </div>
+
+  <div class="scroll-hint">scroll for more pain</div>
+
+</section>
+
+<!-- ── SECTION 3: Height Roast ── -->
+<section id="height">
+
+  <div class="ht-title">📏 Height Report 📏</div>
+  <div class="ht-subtitle">certified medical documentation</div>
+
+  <!-- Animated measuring tape SVG -->
+  <div class="tape-wrap">
+    <svg class="tape-svg" viewBox="0 0 640 90" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tapeGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#f5d000"/>
+          <stop offset="100%" stop-color="#d4a800"/>
+        </linearGradient>
+      </defs>
+      <!-- Tape body -->
+      <rect x="10" y="25" width="620" height="40" rx="6" fill="url(#tapeGrad)" opacity="0.15"/>
+      <!-- Animated fill bar -->
+      <rect class="tape-fill" id="tapeFill" x="10" y="25" width="580" height="40" rx="6"
+            fill="url(#tapeGrad)" opacity="0.85"/>
+      <!-- Tick marks every ~24px = 1 foot -->
+      <g stroke="#8a6800" stroke-width="1" opacity="0.7">
+        <!-- Major ticks at feet -->
+        <line x1="10"  y1="25" x2="10"  y2="65"/> <!-- 0 -->
+        <line x1="106" y1="25" x2="106" y2="65"/> <!-- 1ft -->
+        <line x1="202" y1="25" x2="202" y2="65"/> <!-- 2ft = BRECK -->
+        <line x1="298" y1="25" x2="298" y2="65"/> <!-- 3ft -->
+        <line x1="394" y1="25" x2="394" y2="65"/> <!-- 4ft -->
+        <line x1="490" y1="25" x2="490" y2="65"/> <!-- 5ft -->
+        <line x1="586" y1="25" x2="586" y2="65"/> <!-- 6ft -->
+        <!-- Minor ticks (inches) every 8px -->
+        <line x1="42"  y1="35" x2="42"  y2="65" stroke-width="0.5"/>
+        <line x1="74"  y1="35" x2="74"  y2="65" stroke-width="0.5"/>
+        <line x1="138" y1="35" x2="138" y2="65" stroke-width="0.5"/>
+        <line x1="170" y1="35" x2="170" y2="65" stroke-width="0.5"/>
+        <line x1="234" y1="35" x2="234" y2="65" stroke-width="0.5"/>
+        <line x1="266" y1="35" x2="266" y2="65" stroke-width="0.5"/>
+        <line x1="330" y1="35" x2="330" y2="65" stroke-width="0.5"/>
+        <line x1="362" y1="35" x2="362" y2="65" stroke-width="0.5"/>
+        <line x1="426" y1="35" x2="426" y2="65" stroke-width="0.5"/>
+        <line x1="458" y1="35" x2="458" y2="65" stroke-width="0.5"/>
+        <line x1="522" y1="35" x2="522" y2="65" stroke-width="0.5"/>
+        <line x1="554" y1="35" x2="554" y2="65" stroke-width="0.5"/>
+      </g>
+      <!-- Foot labels -->
+      <g font-family="monospace" font-size="9" fill="#5a3e00" text-anchor="middle">
+        <text x="10"  y="21">0</text>
+        <text x="106" y="21">1'</text>
+        <text x="298" y="21">3'</text>
+        <text x="394" y="21">4'</text>
+        <text x="490" y="21">5'</text>
+        <text x="586" y="21">6'</text>
+      </g>
+      <!-- BRECK marker at 2ft -->
+      <g class="tape-marker" id="tapeMarker" transform-origin="202 10">
+        <line x1="202" y1="0" x2="202" y2="70" stroke="#ff4444" stroke-width="2.5"/>
+        <rect x="148" y="0" width="108" height="22" rx="4" fill="#ff4444"/>
+        <text x="202" y="15" text-anchor="middle" font-family="monospace" font-size="10"
+              font-weight="bold" fill="#fff">2'0" = BRECK 😭</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Height comparison chart -->
+  <div class="chart-wrap" id="heightChart">
+    <div class="chart-grid">
+
+      <!-- Toilet 15" → 63px -->
+      <div class="chart-col">
+        <div class="chart-emoji">🚽</div>
+        <div class="chart-bar" style="height:63px;background:linear-gradient(180deg,#888,#444);transition-delay:0.0s;"></div>
+        <div class="chart-label">Toilet<div class="chart-ht">1'3"</div></div>
+      </div>
+
+      <!-- BRECK 24" → 101px -->
+      <div class="chart-col">
+        <div class="chart-emoji">👦</div>
+        <div class="chart-bar breck-bar" style="height:101px;transition-delay:0.1s;"></div>
+        <div class="chart-label breck-lbl">BRECK<div class="chart-ht breck-ht">2'0" 💀</div></div>
+      </div>
+
+      <!-- Traffic cone 28" → 118px -->
+      <div class="chart-col">
+        <div class="chart-emoji">🚧</div>
+        <div class="chart-bar" style="height:118px;background:linear-gradient(180deg,#ff8c00,#cc5500);transition-delay:0.15s;"></div>
+        <div class="chart-label">Traffic<br>Cone<div class="chart-ht">2'4" ↑ taller</div></div>
+      </div>
+
+      <!-- Golden Retriever 24" → 101px -->
+      <div class="chart-col">
+        <div class="chart-emoji">🐕</div>
+        <div class="chart-bar" style="height:101px;background:linear-gradient(180deg,#d4a017,#8b6914);transition-delay:0.2s;"></div>
+        <div class="chart-label">Golden<br>Retriever<div class="chart-ht">2'0" = same</div></div>
+      </div>
+
+      <!-- 5-year-old 42" → 177px -->
+      <div class="chart-col">
+        <div class="chart-emoji">👶</div>
+        <div class="chart-bar" style="height:177px;background:linear-gradient(180deg,#00cfff,#0070aa);transition-delay:0.25s;"></div>
+        <div class="chart-label">Average<br>5-Year-Old<div class="chart-ht">3'6"</div></div>
+      </div>
+
+      <!-- Average man 69" → 291px -->
+      <div class="chart-col">
+        <div class="chart-emoji">🧍</div>
+        <div class="chart-bar" style="height:291px;background:linear-gradient(180deg,#a855f7,#6b21a8);transition-delay:0.3s;"></div>
+        <div class="chart-label">Average<br>Man<div class="chart-ht">5'9"</div></div>
+      </div>
+
+      <!-- Shaq 85" → 358px -->
+      <div class="chart-col">
+        <div class="chart-emoji">👑</div>
+        <div class="chart-bar" style="height:358px;background:linear-gradient(180deg,#39ff14,#1a8a00);transition-delay:0.35s;"></div>
+        <div class="chart-label">Shaq<div class="chart-ht">7'1"</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stat pills -->
+  <div class="ht-pills">
+    <div class="ht-pill">
+      <div class="pill-val red">2 ft</div>
+      <div class="pill-lbl">Official Height</div>
+    </div>
+    <div class="ht-pill">
+      <div class="pill-val">24 in</div>
+      <div class="pill-lbl">Same as a ruler</div>
+    </div>
+    <div class="ht-pill">
+      <div class="pill-val red">-3'9"</div>
+      <div class="pill-lbl">vs average man</div>
+    </div>
+    <div class="ht-pill">
+      <div class="pill-val">🚧</div>
+      <div class="pill-lbl">shorter than a cone</div>
+    </div>
+  </div>
+
+  <!-- Roast quote -->
+  <div class="ht-roast-box">
+    <div class="ht-roast-text" id="htRoastText">
+      "Scientists confirm Breck is 2 feet tall — the same height as a golden retriever and shorter than a traffic cone."
+    </div>
+  </div>
+
+  <!-- Tiny conclusion -->
+  <div class="tiny-conclusion">
+    <div class="tiny-emoji">🐜</div>
+    <div class="tiny-caption">He shops in the American Girl doll aisle 💅</div>
+  </div>
+
+</section>
+
+<script>
+  // ── Canvas setup ─────────────────────────────────────────────
+  const canvas = document.getElementById('particleCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['#ff0080','#ff8c00','#ffff00','#00ff88','#00cfff','#a855f7','#ffffff'];
+
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(rnd = false) {
+      this.x = Math.random() * canvas.width;
+      this.y = rnd ? Math.random() * canvas.height : canvas.height + 10;
+      this.vx = (Math.random() - 0.5) * 1.5;
+      this.vy = -(Math.random() * 2 + 0.5);
+      this.r  = Math.random() * 3 + 1;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.life = Math.random() * 200 + 100;
+      this.age  = 0;
+      this.alpha = Math.random() * 0.7 + 0.3;
+    }
+    update() {
+      this.x  += this.vx;
+      this.y  += this.vy;
+      this.vy -= 0.01;
+      this.vx += (Math.random() - 0.5) * 0.1;
+      this.age++;
+      this.alpha = Math.max(0, 1 - this.age / this.life) * 0.8;
+      if (this.age >= this.life || this.y < -10) this.reset();
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.shadowBlur  = 12;
+      ctx.shadowColor = this.color;
+      ctx.fillStyle   = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class Star {
+    constructor() {
+      this.x = Math.random() * 2000 - 1000;
+      this.y = Math.random() * 2000 - 1000;
+      this.z = Math.random() * 1000;
+      this.speed = Math.random() * 3 + 1;
+    }
+    update() {
+      this.z -= this.speed;
+      if (this.z <= 0) { this.x = Math.random()*2000-1000; this.y = Math.random()*2000-1000; this.z = 1000; }
+    }
+    draw() {
+      const cx = canvas.width / 2, cy = canvas.height / 2;
+      const sx = (this.x / this.z) * canvas.width  + cx;
+      const sy = (this.y / this.z) * canvas.height + cy;
+      const size  = Math.max(0.1, (1 - this.z / 1000) * 3);
+      const alpha = 1 - this.z / 1000;
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.fillStyle   = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  const particles = Array.from({ length: 280 }, () => new Particle());
+  const stars     = Array.from({ length: 200 }, () => new Star());
+
+  (function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => { s.update(); s.draw(); });
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  })();
+
+  // ── Floating emojis ──────────────────────────────────────────
+  const EMOJIS = ['💩','🦨','🤢','💨','🤮','😵','💀'];
+  function spawnEmoji() {
+    const el = document.createElement('div');
+    el.className = 'floating-emoji';
+    el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    el.style.left = Math.random() * 95 + 'vw';
+    const dur   = (Math.random() * 5 + 5).toFixed(1) + 's';
+    const delay = (Math.random() * 3).toFixed(1) + 's';
+    el.style.animation = `floatUp ${dur} ${delay} linear forwards`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), (parseFloat(dur) + parseFloat(delay) + 0.5) * 1000);
+  }
+  setInterval(spawnEmoji, 600);
+
+  // ── Click shockwave ──────────────────────────────────────────
+  const shockStyle = document.createElement('style');
+  shockStyle.textContent = `
+    @keyframes shockwave {
+      0%   { width:10px;height:10px;opacity:1;border-color:#ff0080; }
+      100% { width:300px;height:300px;opacity:0;border-color:#a855f7; }
+    }
+  `;
+  document.head.appendChild(shockStyle);
+
+  document.addEventListener('click', (e) => {
+    const ring = document.createElement('div');
+    ring.style.cssText = `
+      position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+      width:10px;height:10px;border-radius:50%;
+      border:3px solid #ff0080;pointer-events:none;z-index:999;
+      transform:translate(-50%,-50%);
+      animation:shockwave 0.6s ease-out forwards;
+    `;
+    document.body.appendChild(ring);
+    setTimeout(() => ring.remove(), 700);
+  });
+
+  // ── Height section: animate on scroll into view ──────────────
+  const heightChart = document.getElementById('heightChart');
+  const tapeFill    = document.getElementById('tapeFill');
+  const tapeMarker  = document.getElementById('tapeMarker');
+
+  const heightObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // grow bars
+        heightChart.querySelectorAll('.chart-bar').forEach(b => b.classList.add('grow'));
+        // draw tape
+        tapeFill.classList.add('animate');
+        tapeMarker.classList.add('animate');
+        heightObs.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  heightObs.observe(heightChart);
+
+  // ── Height roast quote cycler ─────────────────────────────────
+  const htRoasts = [
+    "\"Scientists confirm Breck is 2 feet tall — the same height as a golden retriever and shorter than a traffic cone.\"",
+    "\"Breck's eye level is most people's knees. He describes the world as 'mostly kneecaps and shoelaces.'\"",
+    "\"He had to climb a chair to reach the floor. The floor. He couldn't reach down to the floor.\"",
+    "\"At 2 feet tall, Breck is the only person who needs a step stool to look at the bottom shelf.\"",
+    "\"His doctor's growth chart stopped at age 1. It was more merciful that way.\"",
+    "\"Fun fact: a standard traffic cone is taller than Breck. This is not a joke. This is peer-reviewed data.\"",
+  ];
+  let htRoastIdx = 0;
+  const htRoastEl = document.getElementById('htRoastText');
+  setInterval(() => {
+    htRoastEl.style.transition = 'opacity 0.4s';
+    htRoastEl.style.opacity = '0';
+    setTimeout(() => {
+      htRoastIdx = (htRoastIdx + 1) % htRoasts.length;
+      htRoastEl.textContent = htRoasts[htRoastIdx];
+      htRoastEl.style.opacity = '1';
+    }, 400);
+  }, 5000);
+
+  // ── Cycling roast quotes ─────────────────────────────────────
+  const roasts = [
+    "\"Peaked at Bronze I. Even the bots felt bad. Two of them stopped shooting out of pity.\"",
+    "\"847 hours invested. Bronze I achieved. A historic waste of a perfectly good gaming chair.\"",
+    "\"His K/D is 0.12 — meaning for every 8 times he dies, he gets one kill. On a good day.\"",
+    "\"Scientists are baffled. 847 hours of Fortnite and still Bronze. They're calling it the Breck Paradox.\"",
+    "\"He doesn't get eliminated. The game just asks him to leave. Out of respect for everyone else.\"",
+    "\"Bronze I. He didn't just miss the podium — he missed the building the podium is in.\"",
+  ];
+  let roastIdx = 0;
+  const roastEl = document.getElementById('roastText');
+  setInterval(() => {
+    roastEl.style.transition = 'opacity 0.4s';
+    roastEl.style.opacity = '0';
+    setTimeout(() => {
+      roastIdx = (roastIdx + 1) % roasts.length;
+      roastEl.textContent = roasts[roastIdx];
+      roastEl.style.opacity = '1';
+    }, 400);
+  }, 5000);
+
+
+</script>
+
+<!-- Nearly invisible secret button -->
+<button id="secret-btn" aria-hidden="true" tabindex="-1">...</button>
+
+<!-- Wholesome overlay -->
+<div id="wholesome" role="dialog" aria-modal="true" aria-label="The truth about Breck">
+  <button class="ws-close" id="ws-close" aria-label="Close">✕</button>
+
+  <div class="ws-inner">
+    <div class="ws-stars">✦ ✦ ✦</div>
+    <h1 class="ws-title">The Truth About Breck</h1>
+    <p class="ws-tagline">you found the secret page — here's what we actually think</p>
+    <hr class="ws-divider" />
+
+    <div class="ws-grid">
+      <div class="ws-card pink">
+        <span class="ws-card-icon">🧠</span>
+        <div class="ws-card-title">Genuinely Smart</div>
+        <div class="ws-card-body">Breck has a way of seeing through noise and getting straight to what matters. He asks better questions than most people, and that's rarer than it sounds.</div>
+      </div>
+      <div class="ws-card blue">
+        <span class="ws-card-icon">😄</span>
+        <div class="ws-card-title">Effortlessly Funny</div>
+        <div class="ws-card-body">Not the kind of funny that tries too hard — the kind where something comes out of his mouth and the whole room loses it. Genuinely one of the funniest people around.</div>
+      </div>
+      <div class="ws-card green">
+        <span class="ws-card-icon">🤝</span>
+        <div class="ws-card-title">A Loyal Friend</div>
+        <div class="ws-card-body">Breck shows up. When something matters, he's there. He remembers things people said weeks ago and checks in. That kind of loyalty is hard to find and easy to take for granted.</div>
+      </div>
+      <div class="ws-card gold">
+        <span class="ws-card-icon">✨</span>
+        <div class="ws-card-title">More Talented Than He Lets On</div>
+        <div class="ws-card-body">He doesn't brag about what he's good at, which somehow makes it more impressive. There's more going on than he'd ever admit out loud.</div>
+      </div>
+      <div class="ws-card purple">
+        <span class="ws-card-icon">💙</span>
+        <div class="ws-card-title">Genuinely Kind</div>
+        <div class="ws-card-body">The roasting is all love — because Breck is the kind of person who can take a joke and dish it back just as hard. Underneath all of it is someone who genuinely cares about the people around him.</div>
+      </div>
+      <div class="ws-card sky">
+        <span class="ws-card-icon">🌟</span>
+        <div class="ws-card-title">Handsome Too, Apparently</div>
+        <div class="ws-card-body">Look, it had to be said. People notice. We're just willing to document it formally on a website that also calls him smelly. That's the range.</div>
+      </div>
+    </div>
+
+    <div class="ws-quote-wrap">
+      <p class="ws-quote-text">There's a version of friendship where you spend the whole time being nice to each other's faces. And then there's the real kind — where you build a whole website roasting someone because you actually like them that much. Breck gets the real kind.</p>
+      <div class="ws-quote-attr">— the person who made this site, probably</div>
+    </div>
+
+    <p class="ws-signoff">
+      Happy to have you around, man.<br>
+      <strong>Don't tell him we said any of this.</strong>
+    </p>
+  </div>
+</div>
+
+<script>
+  // Runs after #secret-btn and #wholesome are in the DOM
+  const secretBtn  = document.getElementById('secret-btn');
+  const wholesome  = document.getElementById('wholesome');
+  const wsCloseBtn = document.getElementById('ws-close');
+
+  function openWholesome() {
+    wholesome.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      wholesome.querySelectorAll('.ws-card').forEach((card, i) => {
+        setTimeout(() => card.classList.add('visible'), i * 100);
+      });
+    }, 200);
+  }
+
+  function closeWholesome() {
+    wholesome.classList.remove('open');
+    document.body.style.overflow = '';
+    wholesome.querySelectorAll('.ws-card').forEach(c => c.classList.remove('visible'));
+  }
+
+  secretBtn.addEventListener('click', openWholesome);
+  wsCloseBtn.addEventListener('click', closeWholesome);
+  wholesome.addEventListener('click', (e) => { if (e.target === wholesome) closeWholesome(); });
+</script>
+</body>
+</html>
