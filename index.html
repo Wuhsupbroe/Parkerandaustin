@@ -518,6 +518,12 @@
 
         tapBtn.onmousedown = (e) => { e.preventDefault(); sendAction('tap'); };
         tapBtn.ontouchstart = (e) => { e.preventDefault(); sendAction('tap'); };
+        const stopTimerBtn = document.getElementById('stop-timer-btn');
+        if (stopTimerBtn) {
+            stopTimerBtn.onclick = () => sendAction('stop-timer');
+            stopTimerBtn.onmousedown = (e) => { e.preventDefault(); sendAction('stop-timer'); };
+            stopTimerBtn.ontouchstart = (e) => { e.preventDefault(); sendAction('stop-timer'); };
+        }
         skipBtn.onclick = () => sendAction('skip');
         document.getElementById('restartBtn').onclick = () => location.reload();
         document.getElementById('overlayRestartBtn').onclick = () => location.reload();
