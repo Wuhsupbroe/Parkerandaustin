@@ -103,50 +103,45 @@
                 <button id="joinBtn" class="h-14 bg-secondary text-on-secondary font-label-caps rounded-xl shadow-[0_0_20px_rgba(255,75,137,0.4)] uppercase tracking-widest">JOIN ROOM</button>
             </div>
         </section>
-        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60">AWAITING DRIVER...</div>
+        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60 uppercase">Awaiting driver input...</div>
     </main>
 
     <!-- Race Screen -->
     <main id="race-screen" class="screen relative z-10 flex flex-col h-screen pt-24 pb-20 px-4 overflow-hidden">
         <div class="flex justify-between items-end mb-4">
             <div class="space-y-1">
-                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">MISSION</span>
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">MISSION</span>
                 <div class="flex items-center gap-2 bg-surface-container-high/60 backdrop-blur-md px-3 py-1 rounded-lg border border-outline-variant/30 text-primary">
                     <span id="game-icon" class="material-symbols-outlined text-[14px]">sports_esports</span>
                     <span id="game-title" class="font-label-caps text-xs uppercase tracking-tight">Speed Tap</span>
                 </div>
             </div>
             <div class="text-right">
-                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">TOURNAMENT</span>
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">PROGRESS</span>
                 <span id="game-progress" class="font-stat-value text-xl text-on-surface">1 / 10</span>
             </div>
         </div>
 
         <div id="game-container" class="relative flex-1 flex flex-col justify-center min-h-0">
-            <!-- View: Tapping / Tug of War -->
-            <div id="view-tapping" class="space-y-10">
+            <!-- View: Tapping -->
+            <div id="view-tapping" class="space-y-8">
                 <div class="space-y-2">
                     <div class="flex justify-between text-primary-fixed-dim italic text-xs font-display-race">
                         <span>PARKER</span><span id="scoreParker">0</span>
                     </div>
                     <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5">
-                        <div id="fillParker" class="h-full bg-primary-container rounded-full transition-all" style="width: 0%"></div>
+                        <div id="fillParker" class="h-full bg-primary-container rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
                 
-                <!-- Tug of War Rope (Hidden by default) -->
                 <div id="rope-view" class="hidden space-y-4">
                     <div class="relative h-4 w-full bg-surface-container-high rounded-full overflow-hidden border border-glass-stroke">
                         <div class="absolute left-1/2 -translate-x-1/2 w-1 h-full bg-white/40 z-10"></div>
                         <div id="rope-indicator" class="absolute top-0 left-1/2 w-8 h-full bg-secondary-container -translate-x-1/2 transition-all duration-300"></div>
                     </div>
-                    <div class="flex justify-between font-label-caps text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                        <span>PARKER SIDE</span><span>AUSTIN SIDE</span>
-                    </div>
                 </div>
 
                 <div class="flex justify-center py-4 relative">
-                    <div id="tap-glow" class="absolute w-48 h-48 bg-primary/10 blur-[60px] rounded-full hidden"></div>
                     <button id="tapBtn" class="relative z-10 w-40 h-40 rounded-full bg-surface-container-high border-4 border-outline-variant/50 shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
                         <span id="tapBtnText" class="font-display-race text-2xl text-on-surface italic uppercase">TAP!</span>
                     </button>
@@ -157,19 +152,19 @@
                         <span id="scoreAustin">0</span><span>AUSTIN</span>
                     </div>
                     <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5">
-                        <div id="fillAustin" class="h-full ml-auto bg-secondary-container rounded-full transition-all" style="width: 0%"></div>
+                        <div id="fillAustin" class="h-full ml-auto bg-secondary-container rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
             <!-- View: Reaction -->
             <div id="view-reaction" class="hidden flex flex-col items-center justify-center">
-                <div id="reaction-box" class="w-full max-w-xs aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center transition-colors duration-75">
+                <div id="reaction-box" class="w-full max-w-xs aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center transition-colors">
                     <span id="reaction-text" class="font-display-race text-4xl italic text-white uppercase">WAIT...</span>
                 </div>
             </div>
 
-            <!-- View: Math / Color Clash -->
+            <!-- View: Math -->
             <div id="view-math" class="hidden flex flex-col items-center gap-8">
                 <div id="math-problem" class="font-display-race text-6xl text-primary drop-shadow-[0_0_15px_#00f0ff] text-center">5 + 3</div>
                 <div id="math-options" class="grid grid-cols-2 gap-4 w-full max-w-xs">
@@ -180,25 +175,28 @@
                 </div>
             </div>
 
-            <!-- View: Perfect Timing -->
+            <!-- View: Timing -->
             <div id="view-timing" class="hidden flex flex-col items-center gap-6">
-                <div class="font-label-caps text-on-surface-variant uppercase tracking-widest">TARGET: 5.00s</div>
                 <div id="timer-display" class="font-display-race text-8xl text-secondary drop-shadow-[0_0_15px_#ff4b89]">0.00</div>
                 <button id="stop-timer-btn" class="w-48 py-4 rounded-xl bg-secondary text-on-secondary font-label-caps uppercase shadow-[0_0_20px_#ff4b89] tracking-widest active:scale-95 transition-all">STOP</button>
             </div>
 
-            <!-- View: Grid (Pop/Memory/Mine) -->
+            <!-- View: Grid -->
             <div id="view-grid" class="hidden flex flex-col items-center gap-6">
-                <p id="grid-msg" class="font-label-caps text-xs text-on-surface-variant uppercase"></p>
                 <div id="grid-container" class="grid grid-cols-3 gap-3 w-full max-w-xs aspect-square">
-                    <!-- 9 boxes generated by JS -->
+                    <!-- Grid boxes -->
                 </div>
             </div>
         </div>
 
-        <button id="restartBtn" class="mx-auto flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high/40 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface text-[10px] font-label-caps uppercase">
-            <span class="material-symbols-outlined text-sm">refresh</span> RESTART TOURNAMENT
-        </button>
+        <div class="mt-auto flex flex-col gap-4">
+            <button id="skipBtn" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface-container-highest border border-glass-stroke text-on-surface-variant font-label-caps text-[10px] tracking-widest uppercase hover:text-on-surface active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-[18px]">skip_next</span> SKIP MISSION
+            </button>
+            <button id="restartBtn" class="mx-auto flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high/40 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface text-[10px] font-label-caps uppercase">
+                <span class="material-symbols-outlined text-sm">refresh</span> RESTART TOURNAMENT
+            </button>
+        </div>
     </main>
 
     <!-- Winner Overlay -->
@@ -207,7 +205,7 @@
         <div class="relative w-full max-w-sm bg-surface-container/80 p-8 rounded-3xl text-center border border-glass-stroke shadow-2xl">
             <h2 id="overlay-title" class="font-display-race text-3xl text-primary italic uppercase mb-2">ROUND OVER!</h2>
             <p id="winnerText" class="font-body-md text-on-surface-variant text-lg mb-6"></p>
-            <div id="next-game-msg" class="font-label-caps text-[10px] text-on-surface-variant animate-pulse tracking-widest">PREPARING NEXT MISSION...</div>
+            <div id="next-game-msg" class="font-label-caps text-[10px] text-on-surface-variant animate-pulse tracking-widest">LOADING NEXT MISSION...</div>
             <button id="overlayRestartBtn" class="hidden w-full py-4 bg-primary text-on-primary font-label-caps rounded-xl uppercase tracking-widest">RESTART TOURNAMENT</button>
         </div>
     </div>
@@ -219,7 +217,7 @@
     </div>
 
     <script>
-        const PEER_PREFIX = 'pa-v3-'; 
+        const PEER_PREFIX = 'pa-v5-'; 
         const GAMES_TOTAL = 10;
         const GAME_MODES = [
             { id: 0, name: 'Speed Tap', icon: 'speed', goal: 30, view: 'tapping' },
@@ -250,6 +248,7 @@
         const statusEl = document.getElementById('status');
         const connStatusEl = document.getElementById('connection-status');
         const gridContainer = document.getElementById('grid-container');
+        const skipBtn = document.getElementById('skipBtn');
 
         const views = {
             tapping: document.getElementById('view-tapping'),
@@ -280,8 +279,7 @@
             const mode = GAME_MODES[gameState.mode];
             if (!mode) return;
 
-            gameTitleEl.textContent = mode.name; 
-            gameIconEl.textContent = mode.icon;
+            gameTitleEl.textContent = mode.name; gameIconEl.textContent = mode.icon;
             gameProgressEl.textContent = `${currentGameIndex + 1} / ${GAMES_TOTAL}`;
             scoreP1El.textContent = tournamentScore.Parker; scoreP2El.textContent = tournamentScore.Austin;
             
@@ -292,20 +290,19 @@
             document.getElementById('fillParker').style.width = `${(gameState.Parker / goal) * 100}%`;
             document.getElementById('fillAustin').style.width = `${(gameState.Austin / goal) * 100}%`;
 
-            // View Management
             Object.values(views).forEach(v => v.classList.add('hidden'));
-            if ([0, 2, 6, 7, 8, 9].includes(gameState.mode)) views.tapping.classList.remove('hidden');
-            else if (gameState.mode === 1) views.reaction.classList.remove('hidden');
-            else if (gameState.mode === 3 || gameState.mode === 4) views.math.classList.remove('hidden');
-            else if (gameState.mode === 5) views.timing.classList.remove('hidden');
+            if (views[mode.view]) views[mode.view].classList.remove('hidden');
 
-            if (gameState.winner) {
-                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} WON THE ROUND!`;
-                winnerOverlay.classList.remove('hidden');
-                tapBtn.disabled = true;
+            document.getElementById('rope-view').classList.toggle('hidden', gameState.mode !== 2);
+            if (gameState.mode === 2) {
+                const offset = (gameState.meta.tug || 0) * 5; 
+                document.getElementById('rope-indicator').style.left = `calc(50% + ${offset}%)`;
+            }
+
+            if (gameState.mode === 7) { 
+                tapBtnText.textContent = gameState.inProgress ? (gameState.meta[myName + 'Charge'] || 0).toFixed(0) + '%' : 'TAP!';
             } else {
-                winnerOverlay.classList.add('hidden');
-                tapBtn.disabled = !gameState.inProgress;
+                tapBtnText.textContent = 'TAP!';
             }
 
             if (gameState.mode === 1) { 
@@ -317,11 +314,8 @@
 
             if (gameState.mode === 3 || gameState.mode === 4) { 
                 document.getElementById('math-problem').textContent = gameState.meta.problem || '';
-                if (gameState.mode === 4) { 
-                    document.getElementById('math-problem').style.color = gameState.meta.textColor || '#00f0ff';
-                } else {
-                    document.getElementById('math-problem').style.color = '#00f0ff';
-                }
+                if (gameState.mode === 4) document.getElementById('math-problem').style.color = gameState.meta.textColor || '#00f0ff';
+                else document.getElementById('math-problem').style.color = '#00f0ff';
                 document.querySelectorAll('.math-opt').forEach((btn, i) => {
                     const opt = (gameState.meta.options || [])[i];
                     btn.textContent = opt;
@@ -329,43 +323,32 @@
                 });
             }
 
-            if (gameState.mode === 5) { 
-                document.getElementById('timer-display').textContent = (gameState.meta.time || 0).toFixed(2);
-            }
+            if (gameState.mode === 5) document.getElementById('timer-display').textContent = (gameState.meta.time || 0).toFixed(2);
+            if ([6, 8, 9].includes(gameState.mode)) renderGrid();
 
-            if ([6, 8, 9].includes(gameState.mode)) { 
-                renderGrid();
-            }
-
-            // Overlay Management
             if (gameState.winner) {
-                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} DOMINATED THE ROUND!`;
+                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} WON THE ROUND!`;
                 winnerOverlay.classList.remove('hidden');
-                tapBtn.disabled = true;
             } else {
                 winnerOverlay.classList.add('hidden');
-                tapBtn.disabled = !gameState.inProgress;
             }
+            
+            skipBtn.classList.toggle('hidden', !isHost);
         }
 
         function renderGrid() {
             gridContainer.innerHTML = '';
             for (let i = 0; i < 9; i++) {
                 const box = document.createElement('div');
-                box.className = 'grid-target bg-surface-container-high rounded-xl border border-glass-stroke flex items-center justify-center cursor-pointer h-full w-full aspect-square';
-                
+                box.className = 'grid-target bg-surface-container-high rounded-xl border border-glass-stroke flex items-center justify-center cursor-pointer aspect-square';
                 if (gameState.mode === 6 && gameState.meta.activeIdx === i) {
-                    box.classList.add('bg-primary', 'accent-glow-blue');
+                    box.classList.add('bg-primary');
                     box.innerHTML = '<span class="material-symbols-outlined text-on-primary">target</span>';
                 }
-                if (gameState.mode === 8) { 
-                    if (gameState.meta.flashing === i) box.classList.add('bg-primary');
-                }
-                if (gameState.mode === 9) { 
-                    if (gameState.meta.revealed && gameState.meta.revealed[i]) {
-                        box.classList.add(gameState.meta.revealed[i] === 'mine' ? 'bg-red-500' : 'bg-green-500');
-                        box.innerHTML = `<span class="material-symbols-outlined text-white">${gameState.meta.revealed[i] === 'mine' ? 'bomb' : 'check'}</span>`;
-                    }
+                if (gameState.mode === 8 && gameState.meta.flashing === i) box.classList.add('bg-primary');
+                if (gameState.mode === 9 && gameState.meta.revealed && gameState.meta.revealed[i]) {
+                    box.classList.add(gameState.meta.revealed[i] === 'mine' ? 'bg-red-500' : 'bg-green-500');
+                    box.innerHTML = `<span class="material-symbols-outlined text-white">${gameState.meta.revealed[i] === 'mine' ? 'bomb' : 'check'}</span>`;
                 }
                 box.onclick = () => sendAction('grid-click', i);
                 gridContainer.appendChild(box);
@@ -373,13 +356,15 @@
         }
 
         function sendAction(name, val = null) {
-            if (!gameState.inProgress) return;
+            console.log('Sending Action:', name, val, 'InProgress:', gameState.inProgress);
+            if (!gameState.inProgress || gameState.winner) return;
             if (isHost) handleAction(name, myName, val);
             else if (conn && conn.open) conn.send({ type: 'action', name, player: myName, val });
         }
 
         function handleAction(name, player, val) {
             if (!gameState.inProgress || gameState.winner) return;
+            console.log('Handling Action:', name, 'from', player);
 
             if (name === 'tap') {
                 if (gameState.mode === 0) { 
@@ -393,11 +378,8 @@
                     endRound(player);
                 } else if (gameState.mode === 7) { 
                     gameState.meta[player + 'Charge'] = (gameState.meta[player + 'Charge'] || 0) + 2;
-                    if (gameState.meta[player + 'Charge'] > 100) { 
-                         gameState.meta[player + 'Charge'] = 0;
-                    } else if (gameState.meta[player + 'Charge'] >= 95) {
-                        endRound(player);
-                    }
+                    if (gameState.meta[player + 'Charge'] > 100) gameState.meta[player + 'Charge'] = 0;
+                    else if (gameState.meta[player + 'Charge'] >= 95) endRound(player);
                 }
             } else if (name === 'math-ans') {
                 if (val === gameState.meta.answer) {
@@ -428,6 +410,8 @@
                         if (gameState[player] >= 3) endRound(player);
                     }
                 }
+            } else if (name === 'skip' && isHost) {
+                endRound('Parker'); // Arbitrary winner to move on
             }
             broadcast(); render();
         }
@@ -440,12 +424,9 @@
             } else if (gameState.mode === 4) { 
                 const colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple'];
                 const hex = ['#ff4b89', '#00dbe9', '#4caf50', '#ffeb3b', '#9c27b0'];
-                const textIdx = Math.floor(Math.random() * 5);
-                const colorIdx = Math.floor(Math.random() * 5);
-                gameState.meta.problem = colors[textIdx];
-                gameState.meta.textColor = hex[colorIdx];
-                gameState.meta.answer = colors[colorIdx];
-                gameState.meta.options = [...colors].sort(() => Math.random() - 0.5);
+                const textIdx = Math.floor(Math.random() * 5), colorIdx = Math.floor(Math.random() * 5);
+                gameState.meta.problem = colors[textIdx]; gameState.meta.textColor = hex[colorIdx];
+                gameState.meta.answer = colors[colorIdx]; gameState.meta.options = [...colors].sort(() => Math.random() - 0.5);
             }
         }
 
@@ -463,7 +444,7 @@
                 const t = setInterval(() => { 
                     if (!gameState.inProgress || gameState.winner) { clearInterval(t); return; } 
                     gameState.meta.time = (gameState.meta.time || 0) + 0.05; 
-                    broadcast(); render(); 
+                    if (isHost) broadcast(); render(); 
                 }, 50);
             }
             if (gameState.mode === 6) gameState.meta.activeIdx = Math.floor(Math.random() * 9);
@@ -477,11 +458,8 @@
             gameState.winner = winner; gameState.inProgress = false; tournamentScore[winner]++;
             broadcast(); render();
             setTimeout(() => {
-                if (currentGameIndex < GAMES_TOTAL - 1) { 
-                    currentGameIndex++; 
-                    gameState.mode = currentGameIndex; 
-                    startRound(); 
-                } else {
+                if (currentGameIndex < GAMES_TOTAL - 1) { currentGameIndex++; gameState.mode = currentGameIndex; startRound(); }
+                else {
                     const f = tournamentScore.Parker > tournamentScore.Austin ? 'Parker' : 'Austin';
                     document.getElementById('overlay-title').textContent = 'CHAMPION!';
                     document.getElementById('winnerText').textContent = `${f.toUpperCase()} IS THE ULTIMATE WINNER!`;
@@ -513,25 +491,28 @@
             peer.on('open', () => {
                 document.getElementById('host-code-display').classList.remove('hidden');
                 code.split('').forEach((n, i) => document.getElementById(`code-${i+1}`).textContent = n);
-                setStatus('Room created!');
+                setStatus('ROOM CREATED! SHARE CODE.');
             });
             peer.on('connection', c => { conn = c; initConn(); });
-            peer.on('error', e => setStatus('Error: ' + e.type, true));
+            peer.on('error', e => setStatus('ERROR: ' + e.type, true));
         };
 
         document.getElementById('joinBtn').onclick = () => {
             myName = document.getElementById('playerSelect').value; isHost = false;
             const code = [1,2,3,4].map(i => document.getElementById(`input-code-${i}`).value).join('');
-            if (code.length < 4) return setStatus('Enter 4 digits', true);
+            if (code.length < 4) return setStatus('ENTER 4 DIGITS', true);
             if (peer) peer.destroy();
             peer = new Peer();
-            peer.on('open', () => { conn = peer.connect(PEER_PREFIX + code); initConn(); setStatus('Connecting...'); });
-            peer.on('error', e => setStatus('Join Error: ' + e.type, true));
+            peer.on('open', () => { conn = peer.connect(PEER_PREFIX + code); initConn(); setStatus('CONNECTING...'); });
+            peer.on('error', e => setStatus('JOIN ERROR: ' + e.type, true));
         };
 
-        tapBtn.onclick = () => sendAction('tap');
+        tapBtn.onmousedown = (e) => { e.preventDefault(); sendAction('tap'); };
+        tapBtn.ontouchstart = (e) => { e.preventDefault(); sendAction('tap'); };
+        skipBtn.onclick = () => sendAction('skip');
         document.getElementById('restartBtn').onclick = () => location.reload();
         document.getElementById('overlayRestartBtn').onclick = () => location.reload();
+        
         [1,2,3,4].forEach(i => {
             const el = document.getElementById(`input-code-${i}`);
             el.oninput = () => { if (el.value && i < 4) document.getElementById(`input-code-${i+1}`).focus(); };
