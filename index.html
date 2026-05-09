@@ -397,6 +397,13 @@
         let gameState = { Parker: 0, Austin: 0, winner: null, inProgress: false };
         let currentRoomCode = '';
 
+        // Performance enforcement settings
+        const LOW_CPS_THRESHOLD = 20; // clicks per second
+        const MAX_CONSECUTIVE_LOW = 3; // rounds in a row below threshold to trigger kick
+        let roundStartTime = null;
+        let roundTapsThisRound = { Parker: 0, Austin: 0 };
+        let consecutiveLowRoundCount = { Parker: 0, Austin: 0 };
+
         function setStatus(message, isError = false) {
             statusEl.textContent = message;
             statusEl.className = `text-center font-label-caps text-[12px] ${isError ? 'text-red-400' : 'text-on-surface-variant/60'} animate-pulse`;
@@ -443,6 +450,9 @@
             await new Promise(r => setTimeout(r, 500));
             countdownOverlay.classList.add('hidden');
             gameState.inProgress = true;
+            // start tracking this round for CPS
+            roundStartTime = Date.now();
+            roundTapsThisRound = { Parker: 0, Austin: 0 };
             render();
             if (isHost) broadcastState();
         }
@@ -464,16 +474,73 @@
                 const opponent = myName === 'Parker' ? 'Austin' : 'Parker';
                 if (!gameState.winner && gameState.inProgress) {
                     gameState[opponent]++;
+                    // count remote tap for this round
+                    if (roundStartTime) roundTapsThisRound[opponent] = (roundTapsThisRound[opponent] || 0) + 1;
                     if (gameState[opponent] >= WINNING_TAP_COUNT) {
                         gameState.winner = opponent;
                         gameState.inProgress = false;
+                        // evaluate performance after round end
+                        evaluateRoundPerformance();
                     }
                     render();
                     broadcastState();
                 }
             } else if (data.type === 'restart' && isHost) {
                 resetGame();
+            } else if (data.type === 'kick') {
+                // Handle kick messages (host may send this)
+                if (data.target === myName) {
+                    setStatus('You have been removed from the lobby (low CPS).', true);
+                    setConnectionStatus('KICKED');
+                    try { conn.close(); } catch(e){}
+                    try { peer && peer.destroy(); } catch(e){}
+                    // Return to setup UI so user can try again
+                    setupScreen.classList.add('active');
+                    raceScreen.classList.remove('active');
+                } else {
+                    setStatus(`${data.target} was removed: ${data.reason || 'performance'}`);
+                }
             }
+        }
+
+        function evaluateRoundPerformance() {
+            if (!roundStartTime) return;
+            const now = Date.now();
+            const durationSec = Math.max(0.1, (now - roundStartTime) / 1000);
+            ['Parker', 'Austin'].forEach(p => {
+                const taps = roundTapsThisRound[p] || 0;
+                const cps = taps / durationSec;
+                if (cps < LOW_CPS_THRESHOLD) {
+                    consecutiveLowRoundCount[p] = (consecutiveLowRoundCount[p] || 0) + 1;
+                } else {
+                    consecutiveLowRoundCount[p] = 0;
+                }
+            });
+
+            // If any player reached the consecutive limit, kick them
+            ['Parker', 'Austin'].forEach(p => {
+                if (consecutiveLowRoundCount[p] >= MAX_CONSECUTIVE_LOW) {
+                    if (isHost && conn && conn.open) {
+                        conn.send({ type: 'kick', target: p, reason: 'low_cps' });
+                    }
+                    if (p === myName) {
+                        setStatus('You have been kicked for low clicks-per-second', true);
+                        setConnectionStatus('KICKED');
+                        try { conn.close(); } catch(e){}
+                        try { peer && peer.destroy(); } catch(e){}
+                        setupScreen.classList.add('active');
+                        raceScreen.classList.remove('active');
+                    } else {
+                        setStatus(`${p} has been removed from the lobby for low performance.`);
+                        // host updates state for UI
+                        broadcastState();
+                    }
+                }
+            });
+
+            // Clear round tracking
+            roundStartTime = null;
+            roundTapsThisRound = { Parker: 0, Austin: 0 };
         }
 
         function initConnection() {
@@ -542,9 +609,12 @@
             if (!gameState.inProgress || gameState.winner) return;
             if (isHost) {
                 gameState[myName]++;
+                // count local host tap for round
+                if (roundStartTime) roundTapsThisRound[myName] = (roundTapsThisRound[myName] || 0) + 1;
                 if (gameState[myName] >= WINNING_TAP_COUNT) {
                     gameState.winner = myName;
                     gameState.inProgress = false;
+                    evaluateRoundPerformance();
                 }
                 render();
                 broadcastState();
