@@ -14,12 +14,11 @@
         theme: {
           extend: {
             "colors": {
-                "on-surface-variant": "#b9cacb", "surface-tint": "#00dbe9", "on-primary": "#00363a", "primary": "#dbfcff", "error": "#ffb4ab", "tertiary-fixed-dim": "#c8c6c5", "tertiary-fixed": "#e5e2e1", "surface-container-high": "#2a2a2a", "tertiary-container": "#dcd9d8", "secondary-container": "#ff4b89", "on-secondary-container": "#590026", "background": "#131313", "on-error-container": "#ffdad6", "error-container": "#93000a", "surface-dim": "#131313", "outline": "#849495", "tertiary": "#f9f5f5", "surface-container": "#201f1f", "surface-container-highest": "#353534", "on-tertiary-fixed-variant": "#474646", "secondary": "#ffb1c3", "on-primary-fixed": "#002022", "on-tertiary-container": "#605f5e", "on-surface": "#e5e2e1", "inverse-primary": "#006970", "primary-fixed-dim": "#00dbe9", "on-tertiary": "#313030", "on-primary-fixed-variant": "#004f54", "surface": "#131313", "secondary-fixed-dim": "#ffb1c3", "surface-container-lowest": "#0e0e0e", "on-tertiary-fixed": "#1c1b1b", "primary-container": "#00f0ff", "outline-variant": "#3b494b", "on-error": "#690005", "on-secondary": "#66002c", "on-primary-container": "#006970", "inverse-on-surface": "#313030", "primary-fixed": "#7df4ff", "inverse-surface": "#e5e2e1", "on-secondary-fixed": "#3f0019", "secondary-fixed": "#ffd9e0", "surface-container-low": "#1c1b1b", "on-background": "#e5e2e1", "on-secondary-fixed-variant": "#8f0041", "surface-variant": "#353534", "surface-bright": "#3a3939"
+                "on-surface-variant": "#b9cacb", "surface-tint": "#00dbe9", "on-primary": "#00363a", "primary": "#dbfcff", "error": "#ffb4ab", "surface-container-high": "#2a2a2a", "secondary-container": "#ff4b89", "background": "#131313", "surface-dim": "#131313", "outline": "#849495", "surface-container": "#201f1f", "surface-container-highest": "#353534", "secondary": "#ffb1c3", "on-surface": "#e5e2e1", "primary-fixed-dim": "#00dbe9", "surface": "#131313", "primary-container": "#00f0ff", "outline-variant": "#3b494b", "surface-container-low": "#1c1b1b", "on-background": "#e5e2e1", "surface-variant": "#353534", "surface-bright": "#3a3939"
             },
             "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-            "spacing": { "gutter": "12px", "container-margin": "20px", "grid-columns": "4", "inner-padding": "12px", "stack-gap": "16px" },
-            "fontFamily": { "body-md": ["sora"], "display-race": ["anybody"], "headline-md": ["anybody"], "headline-lg-mobile": ["anybody"], "label-caps": ["spaceGrotesk"], "stat-value": ["anybody"], "body-lg": ["sora"] },
-            "fontSize": { "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}], "display-race": ["48px", {"lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "900"}], "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "700"}], "headline-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "800"}], "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}], "stat-value": ["20px", {"lineHeight": "24px", "fontWeight": "800"}], "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}] }
+            "spacing": { "gutter": "12px", "container-margin": "20px" },
+            "fontFamily": { "body-md": ["sora"], "display-race": ["anybody"], "headline-md": ["anybody"], "label-caps": ["spaceGrotesk"], "stat-value": ["anybody"], "body-lg": ["sora"] },
           }
         }
       }
@@ -36,6 +35,8 @@
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.2; } 100% { transform: scale(1.5); opacity: 0; } }
         .animate-pulse-ring { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .grid-target { transition: all 0.1s ease-out; }
+        .grid-target:active { transform: scale(0.9); }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body-md overflow-x-hidden selection:bg-surface-tint/30">
@@ -47,9 +48,9 @@
     </div>
 
     <!-- Header -->
-    <header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-outline-variant/30 flex justify-between items-center px-gutter h-16 shadow-[0_0_15px_rgba(0,219,233,0.3)]">
+    <header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-outline-variant/30 flex justify-between items-center px-4 h-16 shadow-[0_0_15px_rgba(0,219,233,0.3)]">
         <div class="flex items-center gap-3">
-            <h1 class="font-display-race text-headline-md tracking-tighter text-primary-fixed-dim italic uppercase">DECATHLON DUEL</h1>
+            <h1 class="font-display-race text-xl tracking-tighter text-primary-fixed-dim italic uppercase">DECATHLON DUEL</h1>
         </div>
         <div class="flex items-center gap-3">
             <div id="tournament-score" class="flex gap-2 bg-surface-container-high px-3 py-1 rounded-lg border border-outline-variant/30">
@@ -57,15 +58,15 @@
                 <span class="text-on-surface-variant/40">—</span>
                 <span id="score-p2" class="font-stat-value text-secondary">0</span>
             </div>
-            <div id="connection-status" class="text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-secondary/30 bg-secondary/10">OFFLINE</div>
+            <div id="connection-status" class="text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-secondary/30 bg-secondary/10 uppercase tracking-widest">OFFLINE</div>
         </div>
     </header>
 
-    <!-- Setup -->
-    <main id="setup-screen" class="screen active relative z-10 pt-24 pb-32 px-gutter flex flex-col gap-8 min-h-screen">
+    <!-- Setup Screen -->
+    <main id="setup-screen" class="screen active relative z-10 pt-24 pb-32 px-4 flex flex-col gap-8 min-h-screen">
         <section class="text-center">
             <h2 class="font-display-race text-4xl italic text-primary mb-2">10-GAME GAUNTLET</h2>
-            <p class="font-label-caps text-[10px] text-surface-tint tracking-widest uppercase">Ultimate Championship</p>
+            <p class="font-label-caps text-[10px] text-surface-tint tracking-widest uppercase">Select Driver & Connect</p>
         </section>
 
         <section class="flex flex-col gap-2">
@@ -79,9 +80,9 @@
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border border-glass-stroke accent-glow-blue flex flex-col gap-4">
                 <h3 class="font-headline-md text-on-surface uppercase italic">Host</h3>
-                <button id="hostBtn" class="h-14 bg-surface-tint text-on-primary font-label-caps rounded-xl shadow-[0_0_20px_rgba(0,219,233,0.4)]">CREATE ROOM</button>
+                <button id="hostBtn" class="h-14 bg-surface-tint text-on-primary font-label-caps rounded-xl shadow-[0_0_20px_rgba(0,219,233,0.4)] uppercase tracking-widest">CREATE ROOM</button>
                 <div id="host-code-display" class="hidden flex flex-col items-center gap-2 p-4 bg-surface-container-highest/40 rounded-xl border border-glass-stroke">
-                    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">CODE</span>
+                    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">ROOM CODE</span>
                     <div class="flex gap-2">
                         <div id="code-1" class="w-12 h-16 bg-surface-container-high border-2 border-surface-tint rounded-lg flex items-center justify-center text-3xl font-display-race">-</div>
                         <div id="code-2" class="w-12 h-16 bg-surface-container-high border-2 border-surface-tint rounded-lg flex items-center justify-center text-3xl font-display-race">-</div>
@@ -94,115 +95,146 @@
             <div class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border border-glass-stroke accent-glow-pink flex flex-col gap-4">
                 <h3 class="font-headline-md text-on-surface uppercase italic">Join</h3>
                 <div class="flex justify-center gap-2">
-                    <input type="number" id="input-code-1" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
-                    <input type="number" id="input-code-2" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
-                    <input type="number" id="input-code-3" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
-                    <input type="number" id="input-code-4" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
+                    <input type="number" id="input-code-1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
+                    <input type="number" id="input-code-2" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
+                    <input type="number" id="input-code-3" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
+                    <input type="number" id="input-code-4" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none" placeholder="0"/>
                 </div>
-                <button id="joinBtn" class="h-14 bg-secondary text-on-secondary font-label-caps rounded-xl shadow-[0_0_20px_rgba(255,75,137,0.4)]">JOIN ROOM</button>
+                <button id="joinBtn" class="h-14 bg-secondary text-on-secondary font-label-caps rounded-xl shadow-[0_0_20px_rgba(255,75,137,0.4)] uppercase tracking-widest">JOIN ROOM</button>
             </div>
         </section>
-        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60">READY FOR DUEL</div>
+        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60">AWAITING DRIVER...</div>
     </main>
 
-    <!-- Race -->
-    <main id="race-screen" class="screen relative z-10 flex flex-col h-screen pt-24 pb-20 px-gutter overflow-hidden">
+    <!-- Race Screen -->
+    <main id="race-screen" class="screen relative z-10 flex flex-col h-screen pt-24 pb-20 px-4 overflow-hidden">
         <div class="flex justify-between items-end mb-4">
             <div class="space-y-1">
-                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">CURRENT GAME</span>
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">MISSION</span>
                 <div class="flex items-center gap-2 bg-surface-container-high/60 backdrop-blur-md px-3 py-1 rounded-lg border border-outline-variant/30 text-primary">
                     <span id="game-icon" class="material-symbols-outlined text-[14px]">sports_esports</span>
                     <span id="game-title" class="font-label-caps text-xs uppercase tracking-tight">Speed Tap</span>
                 </div>
             </div>
             <div class="text-right">
-                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">PROGRESS</span>
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">TOURNAMENT</span>
                 <span id="game-progress" class="font-stat-value text-xl text-on-surface">1 / 10</span>
             </div>
         </div>
 
         <div id="game-container" class="relative flex-1 flex flex-col justify-center min-h-0">
-            <!-- Game Views -->
+            <!-- View: Tapping / Tug of War -->
             <div id="view-tapping" class="space-y-10">
                 <div class="space-y-2">
                     <div class="flex justify-between text-primary-fixed-dim italic text-xs font-display-race">
                         <span>PARKER</span><span id="scoreParker">0</span>
                     </div>
-                    <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5"><div id="fillParker" class="h-full bg-primary-container rounded-full transition-all" style="width: 0%"></div></div>
+                    <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5">
+                        <div id="fillParker" class="h-full bg-primary-container rounded-full transition-all" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="flex justify-center py-4">
-                    <button id="tapBtn" class="w-40 h-40 rounded-full bg-surface-container-high border-4 border-outline-variant/50 shadow-2xl flex flex-col items-center justify-center active:scale-90 transition-transform">
-                        <span id="tapBtnText" class="font-display-race text-2xl text-on-surface italic">TAP!</span>
+                
+                <!-- Tug of War Rope (Hidden by default) -->
+                <div id="rope-view" class="hidden space-y-4">
+                    <div class="relative h-4 w-full bg-surface-container-high rounded-full overflow-hidden border border-glass-stroke">
+                        <div class="absolute left-1/2 -translate-x-1/2 w-1 h-full bg-white/40 z-10"></div>
+                        <div id="rope-indicator" class="absolute top-0 left-1/2 w-8 h-full bg-secondary-container -translate-x-1/2 transition-all duration-300"></div>
+                    </div>
+                    <div class="flex justify-between font-label-caps text-[10px] text-on-surface-variant uppercase tracking-tighter">
+                        <span>PARKER SIDE</span><span>AUSTIN SIDE</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center py-4 relative">
+                    <div id="tap-glow" class="absolute w-48 h-48 bg-primary/10 blur-[60px] rounded-full hidden"></div>
+                    <button id="tapBtn" class="relative z-10 w-40 h-40 rounded-full bg-surface-container-high border-4 border-outline-variant/50 shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+                        <span id="tapBtnText" class="font-display-race text-2xl text-on-surface italic uppercase">TAP!</span>
                     </button>
                 </div>
+
                 <div class="space-y-2">
                     <div class="flex justify-between text-secondary-container italic text-xs font-display-race">
                         <span id="scoreAustin">0</span><span>AUSTIN</span>
                     </div>
-                    <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5"><div id="fillAustin" class="h-full ml-auto bg-secondary-container rounded-full transition-all" style="width: 0%"></div></div>
+                    <div class="h-2 w-full bg-surface-container-lowest rounded-full p-0.5">
+                        <div id="fillAustin" class="h-full ml-auto bg-secondary-container rounded-full transition-all" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
 
+            <!-- View: Reaction -->
             <div id="view-reaction" class="hidden flex flex-col items-center justify-center">
-                <div id="reaction-box" class="w-full max-w-xs aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center transition-colors">
-                    <span id="reaction-text" class="font-display-race text-4xl italic text-white uppercase">Wait...</span>
+                <div id="reaction-box" class="w-full max-w-xs aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center transition-colors duration-75">
+                    <span id="reaction-text" class="font-display-race text-4xl italic text-white uppercase">WAIT...</span>
                 </div>
             </div>
 
+            <!-- View: Math / Color Clash -->
             <div id="view-math" class="hidden flex flex-col items-center gap-8">
-                <div id="math-problem" class="font-display-race text-6xl text-primary drop-shadow-[0_0_15px_#00f0ff]">5 + 3</div>
-                <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
-                    <button class="math-opt h-14 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95">0</button>
-                    <button class="math-opt h-14 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95">0</button>
-                    <button class="math-opt h-14 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95">0</button>
-                    <button class="math-opt h-14 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95">0</button>
+                <div id="math-problem" class="font-display-race text-6xl text-primary drop-shadow-[0_0_15px_#00f0ff] text-center">5 + 3</div>
+                <div id="math-options" class="grid grid-cols-2 gap-4 w-full max-w-xs">
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95 transition-all">0</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95 transition-all">0</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95 transition-all">0</button>
+                    <button class="math-opt h-16 bg-surface-container-high border border-glass-stroke rounded-xl font-display-race text-xl active:scale-95 transition-all">0</button>
                 </div>
             </div>
 
+            <!-- View: Perfect Timing -->
             <div id="view-timing" class="hidden flex flex-col items-center gap-6">
+                <div class="font-label-caps text-on-surface-variant uppercase tracking-widest">TARGET: 5.00s</div>
                 <div id="timer-display" class="font-display-race text-8xl text-secondary drop-shadow-[0_0_15px_#ff4b89]">0.00</div>
-                <button id="stop-timer-btn" class="w-48 py-4 rounded-xl bg-secondary text-on-secondary font-label-caps uppercase shadow-[0_0_20px_#ff4b89]">STOP</button>
+                <button id="stop-timer-btn" class="w-48 py-4 rounded-xl bg-secondary text-on-secondary font-label-caps uppercase shadow-[0_0_20px_#ff4b89] tracking-widest active:scale-95 transition-all">STOP</button>
+            </div>
+
+            <!-- View: Grid (Pop/Memory/Mine) -->
+            <div id="view-grid" class="hidden flex flex-col items-center gap-6">
+                <p id="grid-msg" class="font-label-caps text-xs text-on-surface-variant uppercase"></p>
+                <div id="grid-container" class="grid grid-cols-3 gap-3 w-full max-w-xs aspect-square">
+                    <!-- 9 boxes generated by JS -->
+                </div>
             </div>
         </div>
 
         <button id="restartBtn" class="mx-auto flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high/40 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface text-[10px] font-label-caps uppercase">
-            <span class="material-symbols-outlined text-sm">refresh</span> RESTART
+            <span class="material-symbols-outlined text-sm">refresh</span> RESTART TOURNAMENT
         </button>
     </main>
 
-    <!-- Overlays -->
-    <div id="winner-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-gutter">
+    <!-- Winner Overlay -->
+    <div id="winner-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
         <div class="absolute inset-0 bg-background/80 backdrop-blur-xl"></div>
-        <div class="relative w-full max-w-sm bg-surface-container/80 p-8 rounded-3xl text-center border border-glass-stroke">
+        <div class="relative w-full max-w-sm bg-surface-container/80 p-8 rounded-3xl text-center border border-glass-stroke shadow-2xl">
             <h2 id="overlay-title" class="font-display-race text-3xl text-primary italic uppercase mb-2">ROUND OVER!</h2>
-            <p id="winnerText" class="font-body-md text-on-surface-variant mb-6"></p>
-            <div id="next-game-msg" class="font-label-caps text-[10px] text-on-surface-variant animate-pulse">NEXT GAME IN 3...</div>
-            <button id="overlayRestartBtn" class="hidden w-full py-4 bg-primary text-on-primary font-label-caps rounded-xl uppercase">RESTART TOURNAMENT</button>
+            <p id="winnerText" class="font-body-md text-on-surface-variant text-lg mb-6"></p>
+            <div id="next-game-msg" class="font-label-caps text-[10px] text-on-surface-variant animate-pulse tracking-widest">PREPARING NEXT MISSION...</div>
+            <button id="overlayRestartBtn" class="hidden w-full py-4 bg-primary text-on-primary font-label-caps rounded-xl uppercase tracking-widest">RESTART TOURNAMENT</button>
         </div>
     </div>
 
+    <!-- Countdown Overlay -->
     <div id="countdown-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
         <div class="absolute inset-0 bg-background/60 backdrop-blur-md"></div>
         <div id="countdown-text" class="font-display-race text-[120px] italic text-primary drop-shadow-[0_0_30px_#00f0ff]">3</div>
     </div>
 
     <script>
-        const PEER_PREFIX = 'pa-duel-';
+        const PEER_PREFIX = 'pa-v3-'; 
         const GAMES_TOTAL = 10;
         const GAME_MODES = [
-            { name: 'Speed Tap', icon: 'speed', goal: 30 },
-            { name: 'Reaction Duel', icon: 'bolt' },
-            { name: 'Tug of War', icon: 'sync_alt', goal: 10 },
-            { name: 'Math Race', icon: 'calculate', goal: 5 },
-            { name: 'Color Rush', icon: 'palette', goal: 5 },
-            { name: 'Perfect Timing', icon: 'timer' },
-            { name: 'Flash Charge', icon: 'battery_charging_full', goal: 1 },
-            { name: 'Memory Rush', icon: 'order_play', goal: 3 },
-            { name: 'Quick Shot', icon: 'target', goal: 5 },
-            { name: 'Endurance', icon: 'hourglass_empty', goal: 20 }
+            { id: 0, name: 'Speed Tap', icon: 'speed', goal: 30, view: 'tapping' },
+            { id: 1, name: 'Reaction Duel', icon: 'bolt', goal: 1, view: 'reaction' },
+            { id: 2, name: 'Tug of War', icon: 'sync_alt', goal: 10, view: 'tapping' },
+            { id: 3, name: 'Math Blitz', icon: 'calculate', goal: 5, view: 'math' },
+            { id: 4, name: 'Color Clash', icon: 'palette', goal: 5, view: 'math' },
+            { id: 5, name: 'Perfect Timing', icon: 'timer', goal: 1, view: 'timing' },
+            { id: 6, name: 'Grid Pop', icon: 'ads_click', goal: 8, view: 'grid' },
+            { id: 7, name: 'Power Charge', icon: 'battery_charging_full', goal: 1, view: 'tapping' },
+            { id: 8, name: 'Memory Pulse', icon: 'order_play', goal: 3, view: 'grid' },
+            { id: 9, name: 'Minefield', icon: 'bomb', goal: 3, view: 'grid' }
         ];
 
-        // UI Elements
+        // UI Refs
         const setupScreen = document.getElementById('setup-screen');
         const raceScreen = document.getElementById('race-screen');
         const winnerOverlay = document.getElementById('winner-overlay');
@@ -214,15 +246,20 @@
         const gameIconEl = document.getElementById('game-icon');
         const gameProgressEl = document.getElementById('game-progress');
         const tapBtn = document.getElementById('tapBtn');
+        const tapBtnText = document.getElementById('tapBtnText');
         const statusEl = document.getElementById('status');
         const connStatusEl = document.getElementById('connection-status');
+        const gridContainer = document.getElementById('grid-container');
+
         const views = {
             tapping: document.getElementById('view-tapping'),
             reaction: document.getElementById('view-reaction'),
             math: document.getElementById('view-math'),
-            timing: document.getElementById('view-timing')
+            timing: document.getElementById('view-timing'),
+            grid: document.getElementById('view-grid')
         };
 
+        // State
         let peer = null, conn = null, isHost = false, myName = 'Parker';
         let tournamentScore = { Parker: 0, Austin: 0 };
         let currentGameIndex = 0;
@@ -232,7 +269,7 @@
             statusEl.textContent = msg; 
             statusEl.className = `text-center font-label-caps text-[12px] ${err ? 'text-red-400' : 'text-on-surface-variant/60'}`; 
         }
-        
+
         function broadcast() { 
             if (conn && conn.open && isHost) {
                 conn.send({ type: 'state', state: gameState, tournamentScore, currentGameIndex }); 
@@ -241,38 +278,51 @@
 
         function render() {
             const mode = GAME_MODES[gameState.mode];
-            gameTitleEl.textContent = mode.name; gameIconEl.textContent = mode.icon;
+            if (!mode) return;
+
+            gameTitleEl.textContent = mode.name; 
+            gameIconEl.textContent = mode.icon;
             gameProgressEl.textContent = `${currentGameIndex + 1} / ${GAMES_TOTAL}`;
             scoreP1El.textContent = tournamentScore.Parker; scoreP2El.textContent = tournamentScore.Austin;
+            
             document.getElementById('scoreParker').textContent = gameState.Parker;
             document.getElementById('scoreAustin').textContent = gameState.Austin;
-            document.getElementById('fillParker').style.width = `${(gameState.Parker / (mode.goal || 1)) * 100}%`;
-            document.getElementById('fillAustin').style.width = `${(gameState.Austin / (mode.goal || 1)) * 100}%`;
+            
+            const goal = mode.goal || 1;
+            document.getElementById('fillParker').style.width = `${(gameState.Parker / goal) * 100}%`;
+            document.getElementById('fillAustin').style.width = `${(gameState.Austin / goal) * 100}%`;
 
+            // View Management
             Object.values(views).forEach(v => v.classList.add('hidden'));
-            if ([0, 2, 6, 7, 8, 9].includes(gameState.mode)) views.tapping.classList.remove('hidden');
-            else if (gameState.mode === 1) views.reaction.classList.remove('hidden');
-            else if (gameState.mode === 3 || gameState.mode === 4) views.math.classList.remove('hidden');
-            else if (gameState.mode === 5) views.timing.classList.remove('hidden');
+            if (views[mode.view]) views[mode.view].classList.remove('hidden');
 
-            if (gameState.winner) {
-                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} WON THE ROUND!`;
-                winnerOverlay.classList.remove('hidden');
-                tapBtn.disabled = true;
-            } else {
-                winnerOverlay.classList.add('hidden');
-                tapBtn.disabled = !gameState.inProgress;
+            // Game Specific UI
+            document.getElementById('rope-view').classList.toggle('hidden', gameState.mode !== 2);
+            if (gameState.mode === 2) {
+                const offset = (gameState.meta.tug || 0) * 5; 
+                document.getElementById('rope-indicator').style.left = `calc(50% + ${offset}%)`;
             }
 
-            if (gameState.mode === 1 && gameState.inProgress) {
+            if (gameState.mode === 7) { 
+                tapBtnText.textContent = gameState.inProgress ? (gameState.meta[myName + 'Charge'] || 0).toFixed(0) + '%' : 'TAP!';
+            } else {
+                tapBtnText.textContent = 'TAP!';
+            }
+
+            if (gameState.mode === 1) { 
                 const box = document.getElementById('reaction-box');
                 const text = document.getElementById('reaction-text');
-                if (gameState.meta.ready) { box.classList.add('bg-primary-container'); text.textContent = 'TAP!'; }
-                else { box.classList.remove('bg-primary-container'); text.textContent = 'Wait...'; }
+                if (gameState.meta.ready) { box.className = 'w-full max-w-xs aspect-square rounded-3xl border-4 border-white bg-error flex items-center justify-center'; text.textContent = 'TAP!'; }
+                else { box.className = 'w-full max-w-xs aspect-square rounded-3xl border-4 border-white/10 flex items-center justify-center'; text.textContent = 'WAIT...'; }
             }
 
-            if ((gameState.mode === 3 || gameState.mode === 4) && gameState.inProgress) {
+            if (gameState.mode === 3 || gameState.mode === 4) { 
                 document.getElementById('math-problem').textContent = gameState.meta.problem || '';
+                if (gameState.mode === 4) { 
+                    document.getElementById('math-problem').style.color = gameState.meta.textColor || '#00f0ff';
+                } else {
+                    document.getElementById('math-problem').style.color = '#00f0ff';
+                }
                 document.querySelectorAll('.math-opt').forEach((btn, i) => {
                     const opt = (gameState.meta.options || [])[i];
                     btn.textContent = opt;
@@ -280,9 +330,46 @@
                 });
             }
 
-            if (gameState.mode === 5) {
+            if (gameState.mode === 5) { 
                 document.getElementById('timer-display').textContent = (gameState.meta.time || 0).toFixed(2);
-                document.getElementById('stop-timer-btn').onclick = () => sendAction('stop-timer');
+            }
+
+            if ([6, 8, 9].includes(gameState.mode)) { 
+                renderGrid();
+            }
+
+            // Overlay Management
+            if (gameState.winner) {
+                document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} DOMINATED THE ROUND!`;
+                winnerOverlay.classList.remove('hidden');
+                tapBtn.disabled = true;
+            } else {
+                winnerOverlay.classList.add('hidden');
+                tapBtn.disabled = !gameState.inProgress;
+            }
+        }
+
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const box = document.createElement('div');
+                box.className = 'grid-target bg-surface-container-high rounded-xl border border-glass-stroke flex items-center justify-center cursor-pointer h-full w-full aspect-square';
+                
+                if (gameState.mode === 6 && gameState.meta.activeIdx === i) {
+                    box.classList.add('bg-primary', 'accent-glow-blue');
+                    box.innerHTML = '<span class="material-symbols-outlined text-on-primary">target</span>';
+                }
+                if (gameState.mode === 8) { 
+                    if (gameState.meta.flashing === i) box.classList.add('bg-primary');
+                }
+                if (gameState.mode === 9) { 
+                    if (gameState.meta.revealed && gameState.meta.revealed[i]) {
+                        box.classList.add(gameState.meta.revealed[i] === 'mine' ? 'bg-red-500' : 'bg-green-500');
+                        box.innerHTML = `<span class="material-symbols-outlined text-white">${gameState.meta.revealed[i] === 'mine' ? 'bomb' : 'check'}</span>`;
+                    }
+                }
+                box.onclick = () => sendAction('grid-click', i);
+                gridContainer.appendChild(box);
             }
         }
 
@@ -293,37 +380,74 @@
         }
 
         function handleAction(name, player, val) {
-            if (!gameState.inProgress) return;
+            if (!gameState.inProgress || gameState.winner) return;
+
             if (name === 'tap') {
-                if (gameState.mode === 0 || gameState.mode >= 6) {
+                if (gameState.mode === 0) { 
                     gameState[player]++;
-                    if (gameState[player] >= (GAME_MODES[gameState.mode].goal || 1)) endRound(player);
-                } else if (gameState.mode === 2) {
+                    if (gameState[player] >= 30) endRound(player);
+                } else if (gameState.mode === 2) { 
                     const change = player === 'Parker' ? 1 : -1;
                     gameState.meta.tug = (gameState.meta.tug || 0) + change;
-                    if (Math.abs(gameState.meta.tug) >= GAME_MODES[2].goal) endRound(gameState.meta.tug > 0 ? 'Parker' : 'Austin');
-                } else if (gameState.mode === 1 && gameState.meta.ready) {
+                    if (Math.abs(gameState.meta.tug) >= 10) endRound(gameState.meta.tug > 0 ? 'Parker' : 'Austin');
+                } else if (gameState.mode === 1 && gameState.meta.ready) { 
                     endRound(player);
+                } else if (gameState.mode === 7) { 
+                    gameState.meta[player + 'Charge'] = (gameState.meta[player + 'Charge'] || 0) + 2;
+                    if (gameState.meta[player + 'Charge'] > 100) { 
+                         gameState.meta[player + 'Charge'] = 0;
+                    } else if (gameState.meta[player + 'Charge'] >= 95) {
+                        endRound(player);
+                    }
                 }
-            } else if (name === 'math-ans' && val === gameState.meta.answer) {
-                gameState[player]++;
-                if (gameState[player] >= GAME_MODES[gameState.mode].goal) endRound(player);
-                else generateMath();
-            } else if (name === 'stop-timer') {
+            } else if (name === 'math-ans') {
+                if (val === gameState.meta.answer) {
+                    gameState[player]++;
+                    if (gameState[player] >= 5) endRound(player);
+                    else generateMath();
+                }
+            } else if (name === 'stop-timer' && gameState.mode === 5) {
                 gameState.meta.stopped = gameState.meta.stopped || {};
                 gameState.meta.stopped[player] = gameState.meta.time;
                 if (Object.keys(gameState.meta.stopped).length === 2) {
                     const d1 = Math.abs(gameState.meta.stopped.Parker - 5), d2 = Math.abs(gameState.meta.stopped.Austin - 5);
                     endRound(d1 < d2 ? 'Parker' : 'Austin');
                 }
+            } else if (name === 'grid-click') {
+                if (gameState.mode === 6 && val === gameState.meta.activeIdx) {
+                    gameState[player]++;
+                    if (gameState[player] >= 8) endRound(player);
+                    else gameState.meta.activeIdx = Math.floor(Math.random() * 9);
+                } else if (gameState.mode === 9) { 
+                    gameState.meta.revealed = gameState.meta.revealed || {};
+                    if (val === gameState.meta.mineIdx) {
+                        gameState.meta.revealed[val] = 'mine';
+                        endRound(player === 'Parker' ? 'Austin' : 'Parker'); 
+                    } else {
+                        gameState.meta.revealed[val] = 'safe';
+                        gameState[player]++;
+                        if (gameState[player] >= 3) endRound(player);
+                    }
+                }
             }
             broadcast(); render();
         }
 
         function generateMath() {
-            const a = Math.floor(Math.random() * 20), b = Math.floor(Math.random() * 20), ans = a + b;
-            const opts = [ans, ans + 2, ans - 3, ans + 5].sort(() => Math.random() - 0.5);
-            gameState.meta.problem = `${a} + ${b}`; gameState.meta.answer = ans; gameState.meta.options = opts;
+            if (gameState.mode === 3) {
+                const a = Math.floor(Math.random() * 20), b = Math.floor(Math.random() * 20), ans = a + b;
+                const opts = [ans, ans + 2, ans - 3, ans + 5].sort(() => Math.random() - 0.5);
+                gameState.meta.problem = `${a} + ${b}`; gameState.meta.answer = ans; gameState.meta.options = opts;
+            } else if (gameState.mode === 4) { 
+                const colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple'];
+                const hex = ['#ff4b89', '#00dbe9', '#4caf50', '#ffeb3b', '#9c27b0'];
+                const textIdx = Math.floor(Math.random() * 5);
+                const colorIdx = Math.floor(Math.random() * 5);
+                gameState.meta.problem = colors[textIdx];
+                gameState.meta.textColor = hex[colorIdx];
+                gameState.meta.answer = colors[colorIdx];
+                gameState.meta.options = [...colors].sort(() => Math.random() - 0.5);
+            }
         }
 
         async function startRound() {
@@ -333,20 +457,32 @@
             for (let i = 3; i > 0; i--) { countdownText.textContent = i; await new Promise(r => setTimeout(r, 800)); }
             countdownOverlay.classList.add('hidden');
             gameState.inProgress = true;
+
             if (gameState.mode === 1) setTimeout(() => { if (gameState.inProgress) { gameState.meta.ready = true; broadcast(); render(); } }, 2000 + Math.random() * 3000);
-            else if (gameState.mode === 3 || gameState.mode === 4) generateMath();
-            else if (gameState.mode === 5) {
-                const t = setInterval(() => { if (!gameState.inProgress || gameState.winner) { clearInterval(t); return; } gameState.meta.time = (gameState.meta.time || 0) + 0.05; broadcast(); render(); }, 50);
+            if (gameState.mode === 3 || gameState.mode === 4) generateMath();
+            if (gameState.mode === 5) {
+                const t = setInterval(() => { 
+                    if (!gameState.inProgress || gameState.winner) { clearInterval(t); return; } 
+                    gameState.meta.time = (gameState.meta.time || 0) + 0.05; 
+                    broadcast(); render(); 
+                }, 50);
             }
+            if (gameState.mode === 6) gameState.meta.activeIdx = Math.floor(Math.random() * 9);
+            if (gameState.mode === 9) gameState.meta.mineIdx = Math.floor(Math.random() * 9);
+
             broadcast(); render();
         }
 
         function endRound(winner) {
+            if (gameState.winner) return; 
             gameState.winner = winner; gameState.inProgress = false; tournamentScore[winner]++;
             broadcast(); render();
             setTimeout(() => {
-                if (currentGameIndex < GAMES_TOTAL - 1) { currentGameIndex++; gameState.mode = (gameState.mode + 1) % GAME_MODES.length; startRound(); }
-                else {
+                if (currentGameIndex < GAMES_TOTAL - 1) { 
+                    currentGameIndex++; 
+                    gameState.mode = currentGameIndex; 
+                    startRound(); 
+                } else {
                     const f = tournamentScore.Parker > tournamentScore.Austin ? 'Parker' : 'Austin';
                     document.getElementById('overlay-title').textContent = 'CHAMPION!';
                     document.getElementById('winnerText').textContent = `${f.toUpperCase()} IS THE ULTIMATE WINNER!`;
@@ -359,7 +495,8 @@
         function initConn() {
             conn.on('open', () => {
                 setupScreen.classList.remove('active'); raceScreen.classList.add('active');
-                connStatusEl.textContent = 'CONNECTED'; connStatusEl.className = 'text-primary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-primary/30 bg-primary/10';
+                connStatusEl.textContent = 'CONNECTED'; 
+                connStatusEl.className = 'text-primary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-primary/30 bg-primary/10 uppercase tracking-widest';
                 if (isHost) startRound();
             });
             conn.on('data', d => {
@@ -367,7 +504,6 @@
                 else if (d.type === 'action' && isHost) handleAction(d.name, d.player, d.val);
             });
             conn.on('close', () => location.reload());
-            conn.on('error', e => setStatus('Conn Error: ' + e, true));
         }
 
         document.getElementById('hostBtn').onclick = () => {
@@ -390,11 +526,7 @@
             if (code.length < 4) return setStatus('Enter 4 digits', true);
             if (peer) peer.destroy();
             peer = new Peer();
-            peer.on('open', () => { 
-                conn = peer.connect(PEER_PREFIX + code); 
-                initConn(); 
-                setStatus('Connecting...'); 
-            });
+            peer.on('open', () => { conn = peer.connect(PEER_PREFIX + code); initConn(); setStatus('Connecting...'); });
             peer.on('error', e => setStatus('Join Error: ' + e.type, true));
         };
 
