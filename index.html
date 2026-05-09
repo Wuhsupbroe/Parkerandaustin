@@ -1,22 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parker & Austin Welcome Game</title>
+  <style>
+    :root {
+      --bg: #0a0a12;
+      --panel: #151528;
+      --panel-2: #1d1d36;
+      --text: #f6f8ff;
+      --muted: #9fa7c7;
+      --accent-a: #52b6ff;
+      --accent-b: #ff66c4;
+      --good: #69ff9d;
+      --warn: #ffd166;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 10%, #172044 0%, var(--bg) 45%),
+                  radial-gradient(circle at 80% 90%, #36153d 0%, var(--bg) 50%);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid #2b2f53;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      letter-spacing: 0.03em;
+    }
+
+    .title-glow {
+      background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid #3b3f67;
+      background: #111428;
+      color: var(--text);
+      padding: 10px 12px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(90deg, #2f4cff, #854dff);
+      border: none;
+      font-weight: 700;
+      transition: transform 0.08s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    button.alt {
+      background: linear-gradient(90deg, #3a3f68, #2a2e50);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      color: var(--warn);
+      font-size: 0.92rem;
+      min-height: 1.4rem;
+      margin-top: 6px;
+    }
+
+    .game {
+      display: none;
+      gap: 14px;
+    }
+
+    .game.live {
+      display: grid;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .player {
+      background: #111428;
+      border: 1px solid #2e3257;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .player h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .score {
+      margin-top: 4px;
+      font-size: clamp(1.8rem, 6vw, 2.8rem);
+      font-weight: 800;
+    }
+
+    .track {
+      height: 12px;
+      border-radius: 999px;
+      background: #0a0d1f;
+      border: 1px solid #2b3156;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.12s linear;
+    }
+
+    .fill.parker { background: linear-gradient(90deg, #2393ff, #68c1ff); }
+    .fill.austin { background: linear-gradient(90deg, #ff4fb8, #ff95d6); }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .big {
+      padding: 14px;
+      font-size: 1.05rem;
+    }
+
+    .winner {
+      font-size: 1.1rem;
+      color: var(--good);
+      min-height: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="menu-container">
-        <h1>Tic Tac Toe</h1>
-        <div class="menu-buttons">
-            <button class="menu-btn" onclick="window.location.href='human-vs-human.html'">Human vs Human</button>
-            <button class="menu-btn" onclick="window.location.href='human-vs-ai.html'">Human vs AI</button>
+  <main class="app">
+    <section class="card">
+      <h1>Welcome, <span class="title-glow">Parker & Austin</span> 👋</h1>
+      <p class="sub">
+        Open this page on two different devices, connect using the setup boxes below,
+        then race by tapping. First to <strong>20 taps</strong> wins.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="grid">
+        <div>
+          <label for="playerSelect">I am</label>
+          <select id="playerSelect">
+            <option value="Parker">Parker</option>
+            <option value="Austin">Austin</option>
+          </select>
         </div>
-        <div class="github-button-container">
-            <button class="github-btn" onclick="window.open('https://github.com/PrinterNB/tic-tac-toe', '_blank')">GitHub</button>
+      </div>
+
+      <div class="grid" style="margin-top: 12px;">
+        <div>
+          <div class="hint"><strong>Host device</strong>: create offer, send it to join device, then paste answer below.</div>
+          <div class="row" style="margin-bottom: 8px;">
+            <button id="hostBtn">Create Offer (Host)</button>
+            <button id="copyOfferBtn" class="alt">Copy Offer</button>
+          </div>
+          <label for="offerOut">Offer (send this to join device)</label>
+          <textarea id="offerOut" readonly placeholder="Host offer appears here..."></textarea>
+
+          <label for="answerIn" style="margin-top: 10px;">Paste answer from join device</label>
+          <textarea id="answerIn" placeholder="Paste join answer JSON here..."></textarea>
+          <div class="row" style="margin-top: 8px;">
+            <button id="applyAnswerBtn" class="alt">Apply Answer (Host)</button>
+          </div>
         </div>
-    </div>
-    <script src="script.js"></script>
+
+        <div>
+          <div class="hint"><strong>Join device</strong>: paste host offer, create answer, send answer back to host.</div>
+          <label for="offerIn">Paste host offer</label>
+          <textarea id="offerIn" placeholder="Paste host offer JSON here..."></textarea>
+          <div class="row" style="margin: 8px 0;">
+            <button id="joinBtn">Create Answer (Join)</button>
+            <button id="copyAnswerBtn" class="alt">Copy Answer</button>
+          </div>
+          <label for="answerOut">Answer (send this back to host)</label>
+          <textarea id="answerOut" readonly placeholder="Join answer appears here..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div id="status" class="status">Not connected yet.</div>
+
+      <div id="game" class="game">
+        <div class="scoreboard">
+          <div class="player">
+            <h3>Parker</h3>
+            <div id="scoreParker" class="score">0</div>
+            <div class="track"><div id="fillParker" class="fill parker"></div></div>
+          </div>
+          <div class="player">
+            <h3>Austin</h3>
+            <div id="scoreAustin" class="score">0</div>
+            <div class="track"><div id="fillAustin" class="fill austin"></div></div>
+          </div>
+        </div>
+
+        <div class="winner" id="winnerText"></div>
+
+        <div class="actions">
+          <button id="tapBtn" class="big">Tap!</button>
+          <button id="restartBtn" class="big alt">Restart Race</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const WINNING_TAP_COUNT = 20;
+
+    const playerSelect = document.getElementById('playerSelect');
+    const hostBtn = document.getElementById('hostBtn');
+    const joinBtn = document.getElementById('joinBtn');
+    const copyOfferBtn = document.getElementById('copyOfferBtn');
+    const copyAnswerBtn = document.getElementById('copyAnswerBtn');
+    const applyAnswerBtn = document.getElementById('applyAnswerBtn');
+
+    const offerOut = document.getElementById('offerOut');
+    const offerIn = document.getElementById('offerIn');
+    const answerOut = document.getElementById('answerOut');
+    const answerIn = document.getElementById('answerIn');
+
+    const statusEl = document.getElementById('status');
+    const gameEl = document.getElementById('game');
+    const tapBtn = document.getElementById('tapBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const winnerText = document.getElementById('winnerText');
+
+    const scoreParkerEl = document.getElementById('scoreParker');
+    const scoreAustinEl = document.getElementById('scoreAustin');
+    const fillParkerEl = document.getElementById('fillParker');
+    const fillAustinEl = document.getElementById('fillAustin');
+
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    const DEFAULT_PLAYER = 'Parker';
+    const VALID_PLAYERS = ['Parker', 'Austin'];
+    // Small anti-flood guard so one peer cannot spam synthetic tap messages unrealistically fast.
+    const REMOTE_TAP_MIN_INTERVAL_MS = 35;
+
+    let pc = null;
+    let dc = null;
+    let isHost = false;
+    let myName = DEFAULT_PLAYER;
+    let lastRemoteTapAt = 0;
+    let gameState = { Parker: 0, Austin: 0, winner: null };
+
+    function isValidPlayerName(name) {
+      return VALID_PLAYERS.includes(name);
+    }
+
+    function otherPlayer(name) {
+      if (name === 'Parker') return 'Austin';
+      if (name === 'Austin') return 'Parker';
+      return null;
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? '#ff8a8a' : '#ffd166';
+    }
+
+    function safeJsonParse(raw) {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function sanitizeState(input) {
+      if (!input || typeof input !== 'object') return null;
+      const parker = Number(input.Parker);
+      const austin = Number(input.Austin);
+      const winner = input.winner;
+      const winnerValid = winner === null || winner === 'Parker' || winner === 'Austin';
+      if (!Number.isFinite(parker) || !Number.isFinite(austin) || !winnerValid) return null;
+      return {
+        Parker: Math.max(0, Math.trunc(parker)),
+        Austin: Math.max(0, Math.trunc(austin)),
+        winner
+      };
+    }
+
+    async function copyText(value) {
+      if (!value) return;
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        setStatus('Clipboard not available. Copy manually.', true);
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(value);
+        setStatus('Copied to clipboard.');
+      } catch {
+        setStatus('Copy failed. Copy manually from the text box.', true);
+      }
+    }
+
+    function render() {
+      scoreParkerEl.textContent = String(gameState.Parker);
+      scoreAustinEl.textContent = String(gameState.Austin);
+      fillParkerEl.style.width = `${Math.min(100, (gameState.Parker / WINNING_TAP_COUNT) * 100)}%`;
+      fillAustinEl.style.width = `${Math.min(100, (gameState.Austin / WINNING_TAP_COUNT) * 100)}%`;
+
+      if (gameState.winner) {
+        winnerText.textContent = `🏆 ${gameState.winner} wins!`;
+      } else {
+        winnerText.textContent = '';
+      }
+
+      tapBtn.disabled = !dc || dc.readyState !== 'open' || Boolean(gameState.winner);
+    }
+
+    function send(payload) {
+      if (dc && dc.readyState === 'open') {
+        dc.send(JSON.stringify(payload));
+      }
+    }
+
+    function broadcastState() {
+      send({ type: 'state', state: gameState });
+    }
+
+    function resetGame() {
+      gameState = { Parker: 0, Austin: 0, winner: null };
+      render();
+      if (isHost) {
+        broadcastState();
+      }
+    }
+
+    function applyTap(playerName) {
+      if (gameState.winner) return;
+      if (!isValidPlayerName(playerName)) return;
+      gameState[playerName] += 1;
+      if (gameState[playerName] >= WINNING_TAP_COUNT) {
+        gameState.winner = playerName;
+      }
+      render();
+    }
+
+    function onIncomingMessage(event) {
+      const data = safeJsonParse(event.data);
+      if (!data || typeof data !== 'object') return;
+
+      if (data.type === 'state' && data.state) {
+        const nextState = sanitizeState(data.state);
+        if (!nextState) return;
+        gameState = nextState;
+        render();
+        return;
+      }
+
+      if (!isHost) return;
+
+      if (data.type === 'tap') {
+        const now = Date.now();
+        if (now - lastRemoteTapAt < REMOTE_TAP_MIN_INTERVAL_MS) return;
+        lastRemoteTapAt = now;
+
+        const remotePlayer = otherPlayer(myName);
+        if (!remotePlayer) return;
+        applyTap(remotePlayer);
+        broadcastState();
+      }
+
+      if (data.type === 'restart') {
+        resetGame();
+      }
+    }
+
+    function setLiveConnected() {
+      gameEl.classList.add('live');
+      setStatus('Connected. Tap race is live!');
+      render();
+      if (isHost) {
+        broadcastState();
+      }
+    }
+
+    function attachDataChannel(channel) {
+      dc = channel;
+
+      dc.onopen = () => {
+        setLiveConnected();
+      };
+
+      dc.onmessage = onIncomingMessage;
+
+      dc.onclose = () => {
+        tapBtn.disabled = true;
+        setStatus('Connection closed. Reconnect to play again.', true);
+      };
+
+      dc.onerror = () => {
+        setStatus('Data channel error. Reconnect and retry.', true);
+      };
+    }
+
+    function destroyConnection() {
+      if (dc) {
+        try { dc.close(); } catch (error) {
+          console.error('Data channel close error:', error);
+          setStatus('Failed to close data channel cleanly. You can safely create a new session.', true);
+        }
+      }
+      if (pc) {
+        try { pc.close(); } catch (error) {
+          console.error('Peer connection close error:', error);
+          setStatus('Failed to close peer connection cleanly. You can safely create a new session.', true);
+        }
+      }
+      pc = null;
+      dc = null;
+      gameEl.classList.remove('live');
+      tapBtn.disabled = true;
+    }
+
+    function waitForIceGatheringComplete(connection) {
+      if (connection.iceGatheringState === 'complete') {
+        return Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        const handler = () => {
+          if (connection.iceGatheringState === 'complete') {
+            connection.removeEventListener('icegatheringstatechange', handler);
+            resolve();
+          }
+        };
+        connection.addEventListener('icegatheringstatechange', handler);
+      });
+    }
+
+    async function startHost() {
+      destroyConnection();
+      isHost = true;
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : DEFAULT_PLAYER;
+      setStatus('Creating host offer...');
+
+      pc = new RTCPeerConnection(rtcConfig);
+      attachDataChannel(pc.createDataChannel('tap-race'));
+
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+          setStatus('Peer connection interrupted. Reconnect if needed.', true);
+        }
+      };
+
+      try {
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await waitForIceGatheringComplete(pc);
+
+        offerOut.value = JSON.stringify(pc.localDescription);
+        setStatus('Offer ready. Send it to the join device, then paste their answer.');
+      } catch (error) {
+        console.error('Host offer error:', error);
+        setStatus('Failed to create host offer. Refresh and try again.', true);
+      }
+
+      resetGame();
+    }
+
+    async function startJoin() {
+      destroyConnection();
+      isHost = false;
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : DEFAULT_PLAYER;
+      setStatus('Creating join answer...');
+
+      const remoteOffer = safeJsonParse(offerIn.value.trim());
+      if (!remoteOffer || remoteOffer.type !== 'offer' || typeof remoteOffer.sdp !== 'string') {
+        setStatus('Offer JSON is invalid. Paste a valid host offer.', true);
+        return;
+      }
+
+      pc = new RTCPeerConnection(rtcConfig);
+
+      pc.ondatachannel = (event) => {
+        attachDataChannel(event.channel);
+      };
+
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+          setStatus('Peer connection interrupted. Reconnect if needed.', true);
+        }
+      };
+
+      try {
+        await pc.setRemoteDescription(remoteOffer);
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        await waitForIceGatheringComplete(pc);
+
+        answerOut.value = JSON.stringify(pc.localDescription);
+        setStatus('Answer ready. Send it back to the host device.');
+      } catch (error) {
+        console.error('Join answer error:', error);
+        setStatus('Failed to build answer from offer. Re-copy the offer and try again.', true);
+      }
+
+      resetGame();
+    }
+
+    async function applyHostAnswer() {
+      if (!pc || !isHost) {
+        setStatus('Create a host offer first.', true);
+        return;
+      }
+
+      const remoteAnswer = safeJsonParse(answerIn.value.trim());
+      if (!remoteAnswer || remoteAnswer.type !== 'answer' || typeof remoteAnswer.sdp !== 'string') {
+        setStatus('Answer JSON is invalid. Paste a valid join answer.', true);
+        return;
+      }
+
+      try {
+        await pc.setRemoteDescription(remoteAnswer);
+        setStatus('Answer applied. Waiting for data channel to open...');
+      } catch (error) {
+        console.error('Apply answer error:', error);
+        setStatus('Failed to apply answer. Verify pasted JSON and retry.', true);
+      }
+    }
+
+    tapBtn.addEventListener('click', () => {
+      if (!dc || dc.readyState !== 'open' || gameState.winner) return;
+
+      if (isHost) {
+        applyTap(myName);
+        broadcastState();
+      } else {
+        send({ type: 'tap' });
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      if (!dc || dc.readyState !== 'open') return;
+      if (isHost) {
+        resetGame();
+      } else {
+        send({ type: 'restart' });
+      }
+    });
+
+    hostBtn.addEventListener('click', startHost);
+    joinBtn.addEventListener('click', startJoin);
+    applyAnswerBtn.addEventListener('click', applyHostAnswer);
+
+    copyOfferBtn.addEventListener('click', () => copyText(offerOut.value));
+    copyAnswerBtn.addEventListener('click', () => copyText(answerOut.value));
+
+    render();
+  </script>
 </body>
 </html>
