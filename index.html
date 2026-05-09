@@ -293,7 +293,7 @@
   </main>
 
   <script>
-    const target = 20;
+    const WINNING_TAP_COUNT = 20;
 
     const playerSelect = document.getElementById('playerSelect');
     const hostBtn = document.getElementById('hostBtn');
@@ -327,6 +327,7 @@
 
     const DEFAULT_PLAYER = 'Parker';
     const VALID_PLAYERS = ['Parker', 'Austin'];
+    // Small anti-flood guard so one peer cannot spam synthetic tap messages unrealistically fast.
     const REMOTE_TAP_MIN_INTERVAL_MS = 35;
 
     let pc = null;
@@ -391,8 +392,8 @@
     function render() {
       scoreParkerEl.textContent = String(gameState.Parker);
       scoreAustinEl.textContent = String(gameState.Austin);
-      fillParkerEl.style.width = `${Math.min(100, (gameState.Parker / target) * 100)}%`;
-      fillAustinEl.style.width = `${Math.min(100, (gameState.Austin / target) * 100)}%`;
+      fillParkerEl.style.width = `${Math.min(100, (gameState.Parker / WINNING_TAP_COUNT) * 100)}%`;
+      fillAustinEl.style.width = `${Math.min(100, (gameState.Austin / WINNING_TAP_COUNT) * 100)}%`;
 
       if (gameState.winner) {
         winnerText.textContent = `🏆 ${gameState.winner} wins!`;
@@ -425,7 +426,7 @@
       if (gameState.winner) return;
       if (!isValidPlayerName(playerName)) return;
       gameState[playerName] += 1;
-      if (gameState[playerName] >= target) {
+      if (gameState[playerName] >= WINNING_TAP_COUNT) {
         gameState.winner = playerName;
       }
       render();
@@ -493,13 +494,13 @@
       if (dc) {
         try { dc.close(); } catch (error) {
           console.error('Data channel close error:', error);
-          setStatus('Connection cleanup had an issue. You can still create a new session.', true);
+          setStatus('Failed to close data channel cleanly. You can safely create a new session.', true);
         }
       }
       if (pc) {
         try { pc.close(); } catch (error) {
           console.error('Peer connection close error:', error);
-          setStatus('Connection cleanup had an issue. You can still create a new session.', true);
+          setStatus('Failed to close peer connection cleanly. You can safely create a new session.', true);
         }
       }
       pc = null;
