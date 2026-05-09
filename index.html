@@ -325,13 +325,14 @@
       ]
     };
 
+    const DEFAULT_PLAYER = 'Parker';
     const VALID_PLAYERS = ['Parker', 'Austin'];
     const REMOTE_TAP_MIN_INTERVAL_MS = 35;
 
     let pc = null;
     let dc = null;
     let isHost = false;
-    let myName = 'Parker';
+    let myName = DEFAULT_PLAYER;
     let lastRemoteTapAt = 0;
     let gameState = { Parker: 0, Austin: 0, winner: null };
 
@@ -490,10 +491,16 @@
 
     function destroyConnection() {
       if (dc) {
-        try { dc.close(); } catch (error) { console.error('Data channel close error:', error); }
+        try { dc.close(); } catch (error) {
+          console.error('Data channel close error:', error);
+          setStatus('Connection cleanup had an issue. You can still create a new session.', true);
+        }
       }
       if (pc) {
-        try { pc.close(); } catch (error) { console.error('Peer connection close error:', error); }
+        try { pc.close(); } catch (error) {
+          console.error('Peer connection close error:', error);
+          setStatus('Connection cleanup had an issue. You can still create a new session.', true);
+        }
       }
       pc = null;
       dc = null;
@@ -519,7 +526,7 @@
     async function startHost() {
       destroyConnection();
       isHost = true;
-      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : 'Parker';
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : DEFAULT_PLAYER;
       setStatus('Creating host offer...');
 
       pc = new RTCPeerConnection(rtcConfig);
@@ -538,8 +545,9 @@
 
         offerOut.value = JSON.stringify(pc.localDescription);
         setStatus('Offer ready. Send it to the join device, then paste their answer.');
-      } catch {
-        setStatus('Failed to create host offer.', true);
+      } catch (error) {
+        console.error('Host offer error:', error);
+        setStatus('Failed to create host offer. Refresh and try again.', true);
       }
 
       resetGame();
@@ -548,7 +556,7 @@
     async function startJoin() {
       destroyConnection();
       isHost = false;
-      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : 'Parker';
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : DEFAULT_PLAYER;
       setStatus('Creating join answer...');
 
       const remoteOffer = safeJsonParse(offerIn.value.trim());
@@ -577,8 +585,9 @@
 
         answerOut.value = JSON.stringify(pc.localDescription);
         setStatus('Answer ready. Send it back to the host device.');
-      } catch {
-        setStatus('Failed to build answer from offer.', true);
+      } catch (error) {
+        console.error('Join answer error:', error);
+        setStatus('Failed to build answer from offer. Re-copy the offer and try again.', true);
       }
 
       resetGame();
@@ -599,8 +608,9 @@
       try {
         await pc.setRemoteDescription(remoteAnswer);
         setStatus('Answer applied. Waiting for data channel to open...');
-      } catch {
-        setStatus('Failed to apply answer.', true);
+      } catch (error) {
+        console.error('Apply answer error:', error);
+        setStatus('Failed to apply answer. Verify pasted JSON and retry.', true);
       }
     }
 
