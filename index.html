@@ -258,10 +258,10 @@
             if (gameState.winner) {
                 document.getElementById('winnerText').textContent = `${gameState.winner.toUpperCase()} WON THE ROUND!`;
                 winnerOverlay.classList.remove('hidden');
-                tapBtn.disabled = true;
+                
             } else {
                 winnerOverlay.classList.add('hidden');
-                tapBtn.disabled = !gameState.inProgress;
+                
             }
 
             if (gameState.mode === 1 && gameState.inProgress) {
