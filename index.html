@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <title>Parker & Austin Tap Race</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,400;0,700;0,800;0,900;1,900&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
@@ -128,6 +129,11 @@
         .animate-pulse-ring {
             animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body-md selection:bg-surface-tint/30 selection:text-on-primary overflow-x-hidden">
@@ -172,57 +178,60 @@
             </div>
         </section>
 
-        <!-- WebRTC Setup -->
+        <!-- PeerJS Connection Setup -->
         <section class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <!-- Host Game -->
-            <div class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border-l-4 border-l-surface-tint border-y border-r border-glass-stroke accent-glow-blue flex flex-col gap-4">
+            <div id="host-card" class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border-l-4 border-l-surface-tint border-y border-r border-glass-stroke accent-glow-blue flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-surface-tint" style="font-variation-settings: 'FILL' 1;">wifi_tethering</span>
                     <h3 class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface">Host Game</h3>
                 </div>
-                <p class="font-body-md text-on-surface-variant text-sm">Create a session and share the secret offer key with your opponent.</p>
-                <div class="flex flex-col gap-2">
-                    <button id="hostBtn" class="h-12 w-full bg-surface-tint text-on-primary font-label-caps text-label-caps rounded-lg uppercase tracking-widest active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                        Create Offer
+                <p class="font-body-md text-on-surface-variant text-sm">Create a room and share the 4-digit code with your opponent.</p>
+                <div class="flex flex-col gap-4">
+                    <button id="hostBtn" class="h-14 w-full bg-surface-tint text-on-primary font-label-caps text-label-caps rounded-xl uppercase tracking-widest active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,219,233,0.4)]">
+                        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                        CREATE ROOM
                     </button>
-                    <textarea id="offerOut" readonly class="w-full h-20 bg-surface-container-highest/40 border border-glass-stroke rounded-lg px-3 py-2 text-[10px] font-mono text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none" placeholder="Offer JSON will appear here..."></textarea>
-                    <button id="copyOfferBtn" class="h-10 border border-glass-stroke bg-surface-container-high/50 text-primary font-label-caps text-[10px] rounded-lg uppercase active:scale-[0.98] transition-all flex items-center justify-center gap-2 hover:bg-surface-tint/10">
-                        <span class="material-symbols-outlined text-[14px]">content_copy</span>
-                        Copy Offer
-                    </button>
-                    <div class="h-px bg-glass-stroke my-2"></div>
-                    <textarea id="answerIn" class="w-full h-20 bg-surface-container-highest/40 border border-glass-stroke rounded-lg px-3 py-2 text-[10px] font-mono text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-surface-tint" placeholder="Paste Join Answer JSON here..."></textarea>
-                    <button id="applyAnswerBtn" class="h-12 w-full border-2 border-surface-tint text-surface-tint font-label-caps text-label-caps rounded-lg uppercase active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">bolt</span>
-                        Apply Answer
-                    </button>
+                    
+                    <div id="host-code-display" class="hidden flex flex-col items-center gap-2 p-4 bg-surface-container-highest/40 rounded-xl border border-glass-stroke">
+                        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">YOUR ROOM CODE</span>
+                        <div class="flex gap-2">
+                            <div id="code-1" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
+                            <div id="code-2" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
+                            <div id="code-3" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
+                            <div id="code-4" class="w-12 h-16 bg-surface-container-high flex items-center justify-center rounded-lg border-2 border-surface-tint text-primary font-display-race text-3xl">-</div>
+                        </div>
+                        <button id="copyCodeBtn" class="mt-2 text-[10px] font-label-caps text-surface-tint uppercase flex items-center gap-1 hover:opacity-80">
+                            <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                            Copy Code
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Join Game -->
-            <div class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border-r-4 border-r-secondary border-y border-l border-glass-stroke accent-glow-pink flex flex-col gap-4">
+            <div id="join-card" class="bg-surface-container/60 backdrop-blur-2xl p-6 rounded-xl border-r-4 border-r-secondary border-y border-l border-glass-stroke accent-glow-pink flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">sensors</span>
                     <h3 class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface">Join Game</h3>
                 </div>
-                <p class="font-body-md text-on-surface-variant text-sm">Paste the host's offer key to generate your connection response.</p>
-                <div class="flex flex-col gap-2">
-                    <textarea id="offerIn" class="w-full h-24 bg-surface-container-highest/40 border border-glass-stroke rounded-lg px-3 py-2 text-[10px] font-mono text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-secondary transition-colors" placeholder="Paste Host Offer JSON here..."></textarea>
-                    <button id="joinBtn" class="h-12 w-full bg-secondary text-on-secondary font-label-caps text-label-caps rounded-lg uppercase tracking-widest active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">key</span>
-                        Create Answer
-                    </button>
-                    <textarea id="answerOut" readonly class="w-full h-20 bg-surface-container-highest/40 border border-glass-stroke rounded-lg px-3 py-2 text-[10px] font-mono text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none" placeholder="Answer JSON will appear here..."></textarea>
-                    <button id="copyAnswerBtn" class="h-12 w-full border-2 border-secondary text-secondary font-label-caps text-label-caps rounded-lg uppercase active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">content_copy</span>
-                        Copy Answer
+                <p class="font-body-md text-on-surface-variant text-sm">Enter the 4-digit code provided by the host to connect.</p>
+                <div class="flex flex-col gap-4">
+                    <div class="flex justify-center gap-2">
+                        <input type="number" id="input-code-1" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none transition-colors" placeholder="0"/>
+                        <input type="number" id="input-code-2" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none transition-colors" placeholder="0"/>
+                        <input type="number" id="input-code-3" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none transition-colors" placeholder="0"/>
+                        <input type="number" id="input-code-4" maxlength="1" class="w-12 h-16 bg-surface-container-high border-2 border-outline-variant rounded-lg text-center font-display-race text-3xl text-secondary focus:border-secondary focus:outline-none transition-colors" placeholder="0"/>
+                    </div>
+                    <button id="joinBtn" class="h-14 w-full bg-secondary text-on-secondary font-label-caps text-label-caps rounded-xl uppercase tracking-widest active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,75,137,0.4)]">
+                        <span class="material-symbols-outlined text-[20px]">key</span>
+                        JOIN ROOM
                     </button>
                 </div>
             </div>
         </section>
 
-        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60 animate-pulse">Waiting for connection...</div>
+        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60 animate-pulse">Waiting for driver input...</div>
     </main>
 
     <!-- Race Screen -->
@@ -338,6 +347,7 @@
 
     <script>
         const WINNING_TAP_COUNT = 20;
+        const PEER_PREFIX = 'pa-race-';
 
         const setupScreen = document.getElementById('setup-screen');
         const raceScreen = document.getElementById('race-screen');
@@ -348,14 +358,8 @@
         const playerSelect = document.getElementById('playerSelect');
         const hostBtn = document.getElementById('hostBtn');
         const joinBtn = document.getElementById('joinBtn');
-        const copyOfferBtn = document.getElementById('copyOfferBtn');
-        const copyAnswerBtn = document.getElementById('copyAnswerBtn');
-        const applyAnswerBtn = document.getElementById('applyAnswerBtn');
-
-        const offerOut = document.getElementById('offerOut');
-        const offerIn = document.getElementById('offerIn');
-        const answerOut = document.getElementById('answerOut');
-        const answerIn = document.getElementById('answerIn');
+        const hostCodeDisplay = document.getElementById('host-code-display');
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
 
         const statusEl = document.getElementById('status');
         const connStatusEl = document.getElementById('connection-status');
@@ -369,23 +373,29 @@
         const fillParkerEl = document.getElementById('fillParker');
         const fillAustinEl = document.getElementById('fillAustin');
 
-        const rtcConfig = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-            ]
-        };
+        const joinInputs = [
+            document.getElementById('input-code-1'),
+            document.getElementById('input-code-2'),
+            document.getElementById('input-code-3'),
+            document.getElementById('input-code-4')
+        ];
 
-        const DEFAULT_PLAYER = 'Parker';
-        const VALID_PLAYERS = ['Parker', 'Austin'];
-        const REMOTE_TAP_MIN_INTERVAL_MS = 35;
+        joinInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 1) e.target.value = e.target.value.slice(-1);
+                if (e.target.value && index < 3) joinInputs[index + 1].focus();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) joinInputs[index - 1].focus();
+            });
+        });
 
-        let pc = null;
-        let dc = null;
+        let peer = null;
+        let conn = null;
         let isHost = false;
-        let myName = DEFAULT_PLAYER;
-        let lastRemoteTapAt = 0;
+        let myName = 'Parker';
         let gameState = { Parker: 0, Austin: 0, winner: null, inProgress: false };
+        let currentRoomCode = '';
 
         function setStatus(message, isError = false) {
             statusEl.textContent = message;
@@ -394,21 +404,9 @@
 
         function setConnectionStatus(status) {
             connStatusEl.textContent = status;
-            if (status === 'CONNECTED') {
-                connStatusEl.className = 'text-primary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-primary/30 bg-primary/10 shadow-[0_0_10px_rgba(0,219,233,0.3)]';
-            } else {
-                connStatusEl.className = 'text-secondary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10';
-            }
-        }
-
-        async function copyText(value) {
-            if (!value) return;
-            try {
-                await navigator.clipboard.writeText(value);
-                setStatus('Copied to clipboard!');
-            } catch {
-                setStatus('Copy failed. Please copy manually.', true);
-            }
+            connStatusEl.className = status === 'CONNECTED' 
+                ? 'text-primary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-primary/30 bg-primary/10 shadow-[0_0_10px_rgba(0,219,233,0.3)]'
+                : 'text-secondary font-label-caps text-[10px] tracking-widest px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10';
         }
 
         function render() {
@@ -428,8 +426,8 @@
         }
 
         function broadcastState() {
-            if (dc && dc.readyState === 'open' && isHost) {
-                dc.send(JSON.stringify({ type: 'state', state: gameState }));
+            if (conn && conn.open && isHost) {
+                conn.send({ type: 'state', state: gameState });
             }
         }
 
@@ -437,16 +435,13 @@
             gameState.inProgress = false;
             render();
             countdownOverlay.classList.remove('hidden');
-            
             for (let i = 3; i > 0; i--) {
                 countdownText.textContent = i;
                 await new Promise(r => setTimeout(r, 1000));
             }
-            
             countdownText.textContent = "GO!";
             await new Promise(r => setTimeout(r, 500));
             countdownOverlay.classList.add('hidden');
-            
             gameState.inProgress = true;
             render();
             if (isHost) broadcastState();
@@ -461,123 +456,114 @@
             }
         }
 
-        function applyTap(playerName) {
-            if (gameState.winner || !gameState.inProgress) return;
-            gameState[playerName] += 1;
-            if (gameState[playerName] >= WINNING_TAP_COUNT) {
-                gameState.winner = playerName;
-                gameState.inProgress = false;
-            }
-            render();
-        }
-
-        function onIncomingMessage(event) {
-            const data = JSON.parse(event.data);
+        function onData(data) {
             if (data.type === 'state') {
-                const oldWinner = gameState.winner;
                 gameState = data.state;
                 render();
-                if (!oldWinner && gameState.winner) {
-                    // Winner just declared
+            } else if (data.type === 'tap' && isHost) {
+                const opponent = myName === 'Parker' ? 'Austin' : 'Parker';
+                if (!gameState.winner && gameState.inProgress) {
+                    gameState[opponent]++;
+                    if (gameState[opponent] >= WINNING_TAP_COUNT) {
+                        gameState.winner = opponent;
+                        gameState.inProgress = false;
+                    }
+                    render();
+                    broadcastState();
                 }
-                return;
-            }
-
-            if (!isHost) return;
-
-            if (data.type === 'tap') {
-                const now = Date.now();
-                if (now - lastRemoteTapAt < REMOTE_TAP_MIN_INTERVAL_MS) return;
-                lastRemoteTapAt = now;
-                const remotePlayer = myName === 'Parker' ? 'Austin' : 'Parker';
-                applyTap(remotePlayer);
-                broadcastState();
-            }
-
-            if (data.type === 'restart') {
+            } else if (data.type === 'restart' && isHost) {
                 resetGame();
             }
         }
 
-        function setLiveConnected() {
-            setupScreen.classList.remove('active');
-            raceScreen.classList.add('active');
-            setConnectionStatus('CONNECTED');
-            if (isHost) resetGame();
-        }
-
-        function attachDataChannel(channel) {
-            dc = channel;
-            dc.onopen = () => setLiveConnected();
-            dc.onmessage = onIncomingMessage;
-            dc.onclose = () => {
+        function initConnection() {
+            conn.on('open', () => {
+                setupScreen.classList.remove('active');
+                raceScreen.classList.add('active');
+                setConnectionStatus('CONNECTED');
+                if (isHost) resetGame();
+            });
+            conn.on('data', onData);
+            conn.on('close', () => {
                 setConnectionStatus('DISCONNECTED');
                 location.reload();
-            };
-        }
-
-        function waitForIce(pc) {
-            return new Promise(resolve => {
-                if (pc.iceGatheringState === 'complete') resolve();
-                else pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === 'complete') resolve(); };
             });
         }
 
-        async function startHost() {
+        hostBtn.addEventListener('click', () => {
+            myName = playerSelect.value;
             isHost = true;
-            myName = playerSelect.value;
-            pc = new RTCPeerConnection(rtcConfig);
-            attachDataChannel(pc.createDataChannel('tap-race'));
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-            await waitForIce(pc);
-            offerOut.value = JSON.stringify(pc.localDescription);
-            setStatus('Offer created. Share it with your opponent.');
-        }
+            const code = Math.floor(1000 + Math.random() * 9000).toString();
+            currentRoomCode = code;
+            
+            peer = new Peer(PEER_PREFIX + code);
+            peer.on('open', (id) => {
+                setStatus('Room created. share the code!');
+                hostBtn.classList.add('hidden');
+                hostCodeDisplay.classList.remove('hidden');
+                code.split('').forEach((num, i) => {
+                    document.getElementById(`code-${i+1}`).textContent = num;
+                });
+            });
+            peer.on('connection', (c) => {
+                conn = c;
+                initConnection();
+            });
+            peer.on('error', (err) => {
+                if (err.type === 'unavailable-id') {
+                    setStatus('Code collision. Try again!', true);
+                } else {
+                    setStatus('Error: ' + err.type, true);
+                }
+            });
+        });
 
-        async function startJoin() {
+        joinBtn.addEventListener('click', () => {
+            myName = playerSelect.value;
             isHost = false;
-            myName = playerSelect.value;
-            const remoteOffer = JSON.parse(offerIn.value.trim());
-            pc = new RTCPeerConnection(rtcConfig);
-            pc.ondatachannel = e => attachDataChannel(e.channel);
-            await pc.setRemoteDescription(remoteOffer);
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-            await waitForIce(pc);
-            answerOut.value = JSON.stringify(pc.localDescription);
-            setStatus('Answer created. Send it back to the host.');
-        }
-
-        async function applyHostAnswer() {
-            const remoteAnswer = JSON.parse(answerIn.value.trim());
-            await pc.setRemoteDescription(remoteAnswer);
-            setStatus('Answer applied. Connecting...');
-        }
+            const code = joinInputs.map(i => i.value).join('');
+            if (code.length !== 4) {
+                setStatus('Enter 4 digits!', true);
+                return;
+            }
+            
+            peer = new Peer();
+            peer.on('open', () => {
+                conn = peer.connect(PEER_PREFIX + code);
+                initConnection();
+                setStatus('Connecting to ' + code + '...');
+            });
+            peer.on('error', (err) => {
+                setStatus('Join Error: ' + err.type, true);
+            });
+        });
 
         tapBtn.addEventListener('click', () => {
-            if (gameState.winner || !gameState.inProgress) return;
+            if (!gameState.inProgress || gameState.winner) return;
             if (isHost) {
-                applyTap(myName);
+                gameState[myName]++;
+                if (gameState[myName] >= WINNING_TAP_COUNT) {
+                    gameState.winner = myName;
+                    gameState.inProgress = false;
+                }
+                render();
                 broadcastState();
             } else {
-                dc.send(JSON.stringify({ type: 'tap' }));
+                conn.send({ type: 'tap' });
             }
         });
 
         const handleRestart = () => {
             if (isHost) resetGame();
-            else dc.send(JSON.stringify({ type: 'restart' }));
+            else conn.send({ type: 'restart' });
         };
 
         restartBtn.addEventListener('click', handleRestart);
         overlayRestartBtn.addEventListener('click', handleRestart);
-
-        hostBtn.addEventListener('click', startHost);
-        joinBtn.addEventListener('click', startJoin);
-        applyAnswerBtn.addEventListener('click', applyHostAnswer);
-        copyOfferBtn.addEventListener('click', () => copyText(offerOut.value));
-        copyAnswerBtn.addEventListener('click', () => copyText(answerOut.value));
+        copyCodeBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentRoomCode);
+            setStatus('Code copied!');
+        });
     </script>
 </body>
 </html>
