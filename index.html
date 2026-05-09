@@ -216,7 +216,7 @@
 <body>
   <main class="app">
     <section class="card">
-      <h1>Welcome <span class="title-glow">Parker & Austin</span> 👋</h1>
+      <h1>Welcome, <span class="title-glow">Parker & Austin</span> 👋</h1>
       <p class="sub">
         Open this page on two different devices, connect using the setup boxes below,
         then race by tapping. First to <strong>20 taps</strong> wins.
@@ -490,10 +490,10 @@
 
     function destroyConnection() {
       if (dc) {
-        try { dc.close(); } catch (error) { console.debug('Data channel close error:', error); }
+        try { dc.close(); } catch (error) { console.error('Data channel close error:', error); }
       }
       if (pc) {
-        try { pc.close(); } catch (error) { console.debug('Peer connection close error:', error); }
+        try { pc.close(); } catch (error) { console.error('Peer connection close error:', error); }
       }
       pc = null;
       dc = null;
