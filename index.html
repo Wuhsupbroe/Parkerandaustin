@@ -447,9 +447,21 @@
             } else if (gameState.mode === 4) { 
                 const colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple'];
                 const hex = ['#ff4b89', '#00dbe9', '#4caf50', '#ffeb3b', '#9c27b0'];
-                const textIdx = Math.floor(Math.random() * 5), colorIdx = Math.floor(Math.random() * 5);
-                gameState.meta.problem = colors[textIdx]; gameState.meta.textColor = hex[colorIdx];
-                gameState.meta.answer = colors[colorIdx]; gameState.meta.options = [...colors].sort(() => Math.random() - 0.5);
+                const textIdx = Math.floor(Math.random() * colors.length);
+                const colorIdx = Math.floor(Math.random() * colors.length);
+                gameState.meta.problem = colors[textIdx];
+                gameState.meta.textColor = hex[colorIdx];
+                gameState.meta.answer = colors[colorIdx];
+                // Build 4 option choices that always include the correct answer
+                const others = colors.filter((c, i) => i !== colorIdx);
+                // pick 3 random distractors
+                const distractors = [];
+                while (distractors.length < 3) {
+                    const pick = others[Math.floor(Math.random() * others.length)];
+                    if (!distractors.includes(pick)) distractors.push(pick);
+                }
+                const opts = [gameState.meta.answer, ...distractors].sort(() => Math.random() - 0.5);
+                gameState.meta.options = opts;
             }
         }
 
