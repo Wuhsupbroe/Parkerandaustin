@@ -378,6 +378,8 @@
             if (name === 'tap') {
                 if (gameState.mode === 0) { 
                     gameState[player]++;
+                    gameState.meta.clicks = gameState.meta.clicks || { Parker: 0, Austin: 0 };
+                    gameState.meta.clicks[player] = (gameState.meta.clicks[player] || 0) + 1;
                     if (gameState[player] >= 30) endRound(player);
                 } else if (gameState.mode === 2) { 
                     const change = player === 'Parker' ? 1 : -1;
@@ -468,12 +470,18 @@
         async function startRound() {
             gameState.Parker = 0; gameState.Austin = 0; gameState.winner = null; gameState.inProgress = false; gameState.meta = {};
             broadcast(); render();
+            // show the countdown overlay to all players
             countdownOverlay.classList.remove('hidden');
             for (let i = 3; i > 0; i--) { countdownText.textContent = i; await new Promise(r => setTimeout(r, 800)); }
             countdownOverlay.classList.add('hidden');
             gameState.inProgress = true;
 
             if (gameState.mode === 1) setTimeout(() => { if (gameState.inProgress) { gameState.meta.ready = true; broadcast(); render(); } }, 2000 + Math.random() * 3000);
+            if (gameState.mode === 0) {
+                // Start-time for CPS measurement in click race
+                gameState.meta.startTime = Date.now();
+                gameState.meta.clicks = { Parker: 0, Austin: 0 };
+            }
             if (gameState.mode === 3 || gameState.mode === 4) generateMath();
             if (gameState.mode === 5) {
                 const t = setInterval(() => { 
@@ -498,6 +506,32 @@
 
         function endRound(winner) {
             if (gameState.winner) return; 
+            // If this was the click race (mode 0) compute CPS and kick low performers
+            if (gameState.mode === 0 && isHost) {
+                const now = Date.now();
+                const start = gameState.meta.startTime || now;
+                const elapsed = Math.max(0.001, (now - start) / 1000);
+                const cpsThreshold = 5; // required clicks per second
+                const lowPlayers = [];
+                ['Parker', 'Austin'].forEach(p => {
+                    const cps = (gameState[p] || 0) / elapsed;
+                    if (cps < cpsThreshold) lowPlayers.push({ player: p, cps });
+                });
+                // notify and kick any low players
+                if (lowPlayers.length) {
+                    lowPlayers.forEach(lp => {
+                        if (conn && conn.open) conn.send({ type: 'kick', player: lp.player, cps: lp.cps });
+                        // if host themself is low, force local reload
+                        if (isHost && lp.player === myName) {
+                            setStatus('YOU HAVE BEEN REMOVED FOR LOW CPS', true);
+                            setTimeout(() => location.reload(), 1200);
+                        }
+                    });
+                    // close connection to remove guest(s)
+                    if (conn && conn.open) conn.close();
+                }
+            }
+
             gameState.winner = winner; gameState.inProgress = false; tournamentScore[winner]++;
             broadcast(); render();
             setTimeout(() => {
@@ -522,6 +556,15 @@
             conn.on('data', d => {
                 if (d.type === 'state') { gameState = d.state; tournamentScore = d.tournamentScore; currentGameIndex = d.currentGameIndex; render(); }
                 else if (d.type === 'action' && isHost) handleAction(d.name, d.player, d.val);
+                else if (d.type === 'kick') {
+                    // If this client is targeted, remove them from the lobby
+                    if (d.player === myName) {
+                        setStatus('REMOVED FROM LOBBY (LOW CPS)', true);
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        setStatus(`${d.player} removed from lobby`, true);
+                    }
+                }
             });
             conn.on('close', () => location.reload());
         }
