@@ -32,7 +32,7 @@
     }
 
     .app {
-      width: min(960px, 100%);
+      width: min(980px, 100%);
       display: grid;
       gap: 16px;
     }
@@ -67,7 +67,7 @@
     .grid {
       display: grid;
       gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
     .row {
@@ -86,6 +86,7 @@
 
     input,
     select,
+    textarea,
     button {
       font: inherit;
       border-radius: 10px;
@@ -95,8 +96,18 @@
       padding: 10px 12px;
     }
 
-    input, select {
+    input,
+    select,
+    textarea {
       width: 100%;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      line-height: 1.35;
     }
 
     button {
@@ -112,6 +123,13 @@
 
     button.alt {
       background: linear-gradient(90deg, #3a3f68, #2a2e50);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+      margin-bottom: 6px;
     }
 
     .status {
@@ -193,16 +211,6 @@
       font-weight: 700;
       text-align: center;
     }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.35;
-    }
   </style>
 </head>
 <body>
@@ -210,34 +218,50 @@
     <section class="card">
       <h1>Welcome <span class="title-glow">Parker & Austin</span> 👋</h1>
       <p class="sub">
-        Start a room on one device, join from another, then race by tapping as fast as you can.
-        First to <strong>20 taps</strong> wins.
+        Open this page on two different devices, connect using the setup boxes below,
+        then race by tapping. First to <strong>20 taps</strong> wins.
       </p>
     </section>
 
-    <section class="card grid">
-      <div>
-        <label for="playerSelect">I am</label>
-        <select id="playerSelect">
-          <option value="Parker">Parker</option>
-          <option value="Austin">Austin</option>
-        </select>
+    <section class="card">
+      <div class="grid">
+        <div>
+          <label for="playerSelect">I am</label>
+          <select id="playerSelect">
+            <option value="Parker">Parker</option>
+            <option value="Austin">Austin</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <label for="roomInput">Room code (for joining)</label>
-        <input id="roomInput" placeholder="e.g. parker-austin-42" autocomplete="off" />
-      </div>
-      <div class="row" style="align-items: end;">
-        <button id="hostBtn">Host New Room</button>
-        <button id="joinBtn" class="alt">Join Room</button>
-      </div>
-      <div>
-        <div class="hint">Share this with the other person:</div>
-        <div id="shareLink" class="mono hint">(host a room to generate link)</div>
-      </div>
-      <div>
-        <div class="hint">Room code:</div>
-        <div id="roomCode" class="mono">-</div>
+
+      <div class="grid" style="margin-top: 12px;">
+        <div>
+          <div class="hint"><strong>Host device</strong>: create offer, send it to join device, then paste answer below.</div>
+          <div class="row" style="margin-bottom: 8px;">
+            <button id="hostBtn">Create Offer (Host)</button>
+            <button id="copyOfferBtn" class="alt">Copy Offer</button>
+          </div>
+          <label for="offerOut">Offer (send this to join device)</label>
+          <textarea id="offerOut" readonly placeholder="Host offer appears here..."></textarea>
+
+          <label for="answerIn" style="margin-top: 10px;">Paste answer from join device</label>
+          <textarea id="answerIn" placeholder="Paste join answer JSON here..."></textarea>
+          <div class="row" style="margin-top: 8px;">
+            <button id="applyAnswerBtn" class="alt">Apply Answer (Host)</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="hint"><strong>Join device</strong>: paste host offer, create answer, send answer back to host.</div>
+          <label for="offerIn">Paste host offer</label>
+          <textarea id="offerIn" placeholder="Paste host offer JSON here..."></textarea>
+          <div class="row" style="margin: 8px 0;">
+            <button id="joinBtn">Create Answer (Join)</button>
+            <button id="copyAnswerBtn" class="alt">Copy Answer</button>
+          </div>
+          <label for="answerOut">Answer (send this back to host)</label>
+          <textarea id="answerOut" readonly placeholder="Join answer appears here..."></textarea>
+        </div>
       </div>
     </section>
 
@@ -268,17 +292,22 @@
     </section>
   </main>
 
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script>
     const target = 20;
 
     const playerSelect = document.getElementById('playerSelect');
-    const roomInput = document.getElementById('roomInput');
     const hostBtn = document.getElementById('hostBtn');
     const joinBtn = document.getElementById('joinBtn');
+    const copyOfferBtn = document.getElementById('copyOfferBtn');
+    const copyAnswerBtn = document.getElementById('copyAnswerBtn');
+    const applyAnswerBtn = document.getElementById('applyAnswerBtn');
+
+    const offerOut = document.getElementById('offerOut');
+    const offerIn = document.getElementById('offerIn');
+    const answerOut = document.getElementById('answerOut');
+    const answerIn = document.getElementById('answerIn');
+
     const statusEl = document.getElementById('status');
-    const shareLinkEl = document.getElementById('shareLink');
-    const roomCodeEl = document.getElementById('roomCode');
     const gameEl = document.getElementById('game');
     const tapBtn = document.getElementById('tapBtn');
     const restartBtn = document.getElementById('restartBtn');
@@ -289,31 +318,39 @@
     const fillParkerEl = document.getElementById('fillParker');
     const fillAustinEl = document.getElementById('fillAustin');
 
-    let peer = null;
-    let conn = null;
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    let pc = null;
+    let dc = null;
     let isHost = false;
     let myName = 'Parker';
-    let roomCode = '';
     let gameState = { Parker: 0, Austin: 0, winner: null };
+
+    function otherPlayer(name) {
+      return name === 'Parker' ? 'Austin' : 'Parker';
+    }
 
     function setStatus(message, isError = false) {
       statusEl.textContent = message;
       statusEl.style.color = isError ? '#ff8a8a' : '#ffd166';
     }
 
-    function codeFromInput() {
-      return roomInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
+    function safeJsonParse(raw) {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
     }
 
-    function randomCode() {
-      return 'pa-' + Math.random().toString(36).slice(2, 8);
-    }
-
-    function setRoomUi(code) {
-      roomCode = code;
-      roomCodeEl.textContent = code;
-      const link = `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`;
-      shareLinkEl.textContent = link;
+    function copyText(value) {
+      if (!value) return;
+      navigator.clipboard?.writeText(value).catch(() => {});
     }
 
     function render() {
@@ -324,16 +361,16 @@
 
       if (gameState.winner) {
         winnerText.textContent = `🏆 ${gameState.winner} wins!`;
-        tapBtn.disabled = true;
       } else {
         winnerText.textContent = '';
-        tapBtn.disabled = !conn || !conn.open;
       }
+
+      tapBtn.disabled = !dc || dc.readyState !== 'open' || Boolean(gameState.winner);
     }
 
     function send(payload) {
-      if (conn && conn.open) {
-        conn.send(payload);
+      if (dc && dc.readyState === 'open') {
+        dc.send(JSON.stringify(payload));
       }
     }
 
@@ -358,7 +395,8 @@
       render();
     }
 
-    function onData(data) {
+    function onIncomingMessage(event) {
+      const data = safeJsonParse(event.data);
       if (!data || typeof data !== 'object') return;
 
       if (data.type === 'state' && data.state) {
@@ -369,8 +407,8 @@
 
       if (!isHost) return;
 
-      if (data.type === 'tap' && (data.player === 'Parker' || data.player === 'Austin')) {
-        applyTap(data.player);
+      if (data.type === 'tap') {
+        applyTap(otherPlayer(myName));
         broadcastState();
       }
 
@@ -379,115 +417,163 @@
       }
     }
 
-    function attachConnection(c) {
-      conn = c;
+    function setLiveConnected() {
+      gameEl.classList.add('live');
+      setStatus('Connected. Tap race is live!');
+      render();
+      if (isHost) {
+        broadcastState();
+      }
+    }
 
-      c.on('open', () => {
-        gameEl.classList.add('live');
-        tapBtn.disabled = false;
-        setStatus('Connected. Tap race is live!');
+    function attachDataChannel(channel) {
+      dc = channel;
 
-        if (isHost) {
-          broadcastState();
-        } else {
-          send({ type: 'hello', player: myName });
-        }
-      });
+      dc.onopen = () => {
+        setLiveConnected();
+      };
 
-      c.on('data', onData);
+      dc.onmessage = onIncomingMessage;
 
-      c.on('close', () => {
-        setStatus('Connection closed. Re-host or re-join to play again.', true);
+      dc.onclose = () => {
         tapBtn.disabled = true;
-      });
+        setStatus('Connection closed. Reconnect to play again.', true);
+      };
 
-      c.on('error', () => {
-        setStatus('Connection error. Try a new room code.', true);
-      });
+      dc.onerror = () => {
+        setStatus('Data channel error. Reconnect and retry.', true);
+      };
     }
 
-    function destroyPeer() {
-      if (conn) {
-        try { conn.close(); } catch (_) {}
+    function destroyConnection() {
+      if (dc) {
+        try { dc.close(); } catch (_) {}
       }
-      if (peer) {
-        try { peer.destroy(); } catch (_) {}
+      if (pc) {
+        try { pc.close(); } catch (_) {}
       }
-      conn = null;
-      peer = null;
+      pc = null;
+      dc = null;
       gameEl.classList.remove('live');
+      tapBtn.disabled = true;
     }
 
-    function startHost() {
-      destroyPeer();
+    function waitForIceGatheringComplete(connection) {
+      if (connection.iceGatheringState === 'complete') {
+        return Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        const handler = () => {
+          if (connection.iceGatheringState === 'complete') {
+            connection.removeEventListener('icegatheringstatechange', handler);
+            resolve();
+          }
+        };
+        connection.addEventListener('icegatheringstatechange', handler);
+      });
+    }
+
+    async function startHost() {
+      destroyConnection();
       isHost = true;
       myName = playerSelect.value;
-      const code = codeFromInput() || randomCode();
-      setRoomUi(code);
-      setStatus('Starting host...');
+      setStatus('Creating host offer...');
 
-      peer = new Peer(code);
+      pc = new RTCPeerConnection(rtcConfig);
+      attachDataChannel(pc.createDataChannel('tap-race'));
 
-      peer.on('open', () => {
-        setStatus('Room hosted. Waiting for the other player to join...');
-      });
-
-      peer.on('connection', (incoming) => {
-        if (conn && conn.open) {
-          incoming.close();
-          return;
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+          setStatus('Peer connection interrupted. Reconnect if needed.', true);
         }
-        attachConnection(incoming);
-      });
+      };
 
-      peer.on('error', () => {
-        setStatus('Could not host this room code. Try another code.', true);
-      });
+      try {
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await waitForIceGatheringComplete(pc);
+
+        offerOut.value = JSON.stringify(pc.localDescription);
+        setStatus('Offer ready. Send it to the join device, then paste their answer.');
+      } catch {
+        setStatus('Failed to create host offer.', true);
+      }
 
       resetGame();
     }
 
-    function startJoin() {
-      destroyPeer();
+    async function startJoin() {
+      destroyConnection();
       isHost = false;
       myName = playerSelect.value;
-      const code = codeFromInput();
+      setStatus('Creating join answer...');
 
-      if (!code) {
-        setStatus('Enter a room code to join.', true);
+      const remoteOffer = safeJsonParse(offerIn.value.trim());
+      if (!remoteOffer || remoteOffer.type !== 'offer' || typeof remoteOffer.sdp !== 'string') {
+        setStatus('Offer JSON is invalid. Paste a valid host offer.', true);
         return;
       }
 
-      setRoomUi(code);
-      setStatus('Joining room...');
+      pc = new RTCPeerConnection(rtcConfig);
 
-      peer = new Peer();
+      pc.ondatachannel = (event) => {
+        attachDataChannel(event.channel);
+      };
 
-      peer.on('open', () => {
-        const outgoing = peer.connect(code, { reliable: true });
-        attachConnection(outgoing);
-      });
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+          setStatus('Peer connection interrupted. Reconnect if needed.', true);
+        }
+      };
 
-      peer.on('error', () => {
-        setStatus('Could not join room. Check code or host status.', true);
-      });
+      try {
+        await pc.setRemoteDescription(remoteOffer);
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        await waitForIceGatheringComplete(pc);
+
+        answerOut.value = JSON.stringify(pc.localDescription);
+        setStatus('Answer ready. Send it back to the host device.');
+      } catch {
+        setStatus('Failed to build answer from offer.', true);
+      }
 
       resetGame();
     }
 
+    async function applyHostAnswer() {
+      if (!pc || !isHost) {
+        setStatus('Create a host offer first.', true);
+        return;
+      }
+
+      const remoteAnswer = safeJsonParse(answerIn.value.trim());
+      if (!remoteAnswer || remoteAnswer.type !== 'answer' || typeof remoteAnswer.sdp !== 'string') {
+        setStatus('Answer JSON is invalid. Paste a valid join answer.', true);
+        return;
+      }
+
+      try {
+        await pc.setRemoteDescription(remoteAnswer);
+        setStatus('Answer applied. Waiting for data channel to open...');
+      } catch {
+        setStatus('Failed to apply answer.', true);
+      }
+    }
+
     tapBtn.addEventListener('click', () => {
-      if (!conn || !conn.open || gameState.winner) return;
+      if (!dc || dc.readyState !== 'open' || gameState.winner) return;
 
       if (isHost) {
         applyTap(myName);
         broadcastState();
       } else {
-        send({ type: 'tap', player: myName });
+        send({ type: 'tap' });
       }
     });
 
     restartBtn.addEventListener('click', () => {
-      if (!conn || !conn.open) return;
+      if (!dc || dc.readyState !== 'open') return;
       if (isHost) {
         resetGame();
       } else {
@@ -497,14 +583,10 @@
 
     hostBtn.addEventListener('click', startHost);
     joinBtn.addEventListener('click', startJoin);
+    applyAnswerBtn.addEventListener('click', applyHostAnswer);
 
-    const params = new URLSearchParams(location.search);
-    const roomFromUrl = params.get('room');
-    if (roomFromUrl) {
-      roomInput.value = roomFromUrl;
-      setRoomUi(roomFromUrl);
-      setStatus('Room detected in URL. Pick your name and press Join Room.');
-    }
+    copyOfferBtn.addEventListener('click', () => copyText(offerOut.value));
+    copyAnswerBtn.addEventListener('click', () => copyText(answerOut.value));
 
     render();
   </script>
