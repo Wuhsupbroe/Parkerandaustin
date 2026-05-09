@@ -325,14 +325,24 @@
       ]
     };
 
+    const VALID_PLAYERS = ['Parker', 'Austin'];
+    const REMOTE_TAP_MIN_INTERVAL_MS = 35;
+
     let pc = null;
     let dc = null;
     let isHost = false;
     let myName = 'Parker';
+    let lastRemoteTapAt = 0;
     let gameState = { Parker: 0, Austin: 0, winner: null };
 
+    function isValidPlayerName(name) {
+      return VALID_PLAYERS.includes(name);
+    }
+
     function otherPlayer(name) {
-      return name === 'Parker' ? 'Austin' : 'Parker';
+      if (name === 'Parker') return 'Austin';
+      if (name === 'Austin') return 'Parker';
+      return null;
     }
 
     function setStatus(message, isError = false) {
@@ -348,9 +358,33 @@
       }
     }
 
-    function copyText(value) {
+    function sanitizeState(input) {
+      if (!input || typeof input !== 'object') return null;
+      const parker = Number(input.Parker);
+      const austin = Number(input.Austin);
+      const winner = input.winner;
+      const winnerValid = winner === null || winner === 'Parker' || winner === 'Austin';
+      if (!Number.isFinite(parker) || !Number.isFinite(austin) || !winnerValid) return null;
+      return {
+        Parker: Math.max(0, Math.trunc(parker)),
+        Austin: Math.max(0, Math.trunc(austin)),
+        winner
+      };
+    }
+
+    async function copyText(value) {
       if (!value) return;
-      navigator.clipboard?.writeText(value).catch(() => {});
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        setStatus('Clipboard not available. Copy manually.', true);
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(value);
+        setStatus('Copied to clipboard.');
+      } catch {
+        setStatus('Copy failed. Copy manually from the text box.', true);
+      }
     }
 
     function render() {
@@ -388,6 +422,7 @@
 
     function applyTap(playerName) {
       if (gameState.winner) return;
+      if (!isValidPlayerName(playerName)) return;
       gameState[playerName] += 1;
       if (gameState[playerName] >= target) {
         gameState.winner = playerName;
@@ -400,7 +435,9 @@
       if (!data || typeof data !== 'object') return;
 
       if (data.type === 'state' && data.state) {
-        gameState = data.state;
+        const nextState = sanitizeState(data.state);
+        if (!nextState) return;
+        gameState = nextState;
         render();
         return;
       }
@@ -408,7 +445,13 @@
       if (!isHost) return;
 
       if (data.type === 'tap') {
-        applyTap(otherPlayer(myName));
+        const now = Date.now();
+        if (now - lastRemoteTapAt < REMOTE_TAP_MIN_INTERVAL_MS) return;
+        lastRemoteTapAt = now;
+
+        const remotePlayer = otherPlayer(myName);
+        if (!remotePlayer) return;
+        applyTap(remotePlayer);
         broadcastState();
       }
 
@@ -447,10 +490,10 @@
 
     function destroyConnection() {
       if (dc) {
-        try { dc.close(); } catch (_) {}
+        try { dc.close(); } catch (error) { console.debug('Data channel close error:', error); }
       }
       if (pc) {
-        try { pc.close(); } catch (_) {}
+        try { pc.close(); } catch (error) { console.debug('Peer connection close error:', error); }
       }
       pc = null;
       dc = null;
@@ -476,7 +519,7 @@
     async function startHost() {
       destroyConnection();
       isHost = true;
-      myName = playerSelect.value;
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : 'Parker';
       setStatus('Creating host offer...');
 
       pc = new RTCPeerConnection(rtcConfig);
@@ -505,7 +548,7 @@
     async function startJoin() {
       destroyConnection();
       isHost = false;
-      myName = playerSelect.value;
+      myName = isValidPlayerName(playerSelect.value) ? playerSelect.value : 'Parker';
       setStatus('Creating join answer...');
 
       const remoteOffer = safeJsonParse(offerIn.value.trim());
