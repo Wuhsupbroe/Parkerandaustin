@@ -404,7 +404,21 @@
                     endRound(d1 < d2 ? 'Parker' : 'Austin');
                 }
             } else if (name === 'grid-click') {
-                if (gameState.mode === 6 && val === gameState.meta.activeIdx) {
+                if (gameState.mode === 8) {
+                    // Memory Pulse: correct if player taps the last flashed target
+                    if (val === gameState.meta.target) {
+                        gameState[player] = (gameState[player] || 0) + 1;
+                        if (gameState[player] >= (GAME_MODES.find(g => g.id===8)?.goal || 3)) endRound(player);
+                        else {
+                            // pick next pulse and show briefly
+                            const next = Math.floor(Math.random() * 9);
+                            gameState.meta.target = next;
+                            gameState.meta.flashing = next;
+                            if (isHost) broadcast(); render();
+                            setTimeout(() => { gameState.meta.flashing = null; if (isHost) broadcast(); render(); }, 700);
+                        }
+                    }
+                } else if (gameState.mode === 6 && val === gameState.meta.activeIdx) {
                     gameState[player]++;
                     if (gameState[player] >= 8) endRound(player);
                     else gameState.meta.activeIdx = Math.floor(Math.random() * 9);
@@ -458,6 +472,14 @@
             }
             if (gameState.mode === 6) gameState.meta.activeIdx = Math.floor(Math.random() * 9);
             if (gameState.mode === 9) gameState.meta.mineIdx = Math.floor(Math.random() * 9);
+            if (gameState.mode === 8) {
+                // Memory Pulse: pick a cell to flash, then clear flash and set as target
+                const idx = Math.floor(Math.random() * 9);
+                gameState.meta.target = idx;
+                gameState.meta.flashing = idx;
+                // show briefly then hide the flash but keep target active for players to tap
+                setTimeout(() => { gameState.meta.flashing = null; if (isHost) broadcast(); render(); }, 700);
+            }
 
             broadcast(); render();
         }
