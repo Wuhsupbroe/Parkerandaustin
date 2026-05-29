@@ -526,9 +526,11 @@
                             setStatus('YOU HAVE BEEN REMOVED FOR LOW CPS', true);
                             setTimeout(() => location.reload(), 1200);
                         }
+                        // If a remote player was kicked, close the connection to remove them
+                        if (isHost && lp.player !== myName) {
+                            if (conn && conn.open) conn.close();
+                        }
                     });
-                    // close connection to remove guest(s)
-                    if (conn && conn.open) conn.close();
                 }
             }
 
