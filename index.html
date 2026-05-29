@@ -66,11 +66,11 @@
     <main id="setup-screen" class="screen active relative z-10 pt-24 pb-32 px-4 flex flex-col gap-8 min-h-screen">
         <section class="text-center">
             <h2 class="font-display-race text-4xl italic text-primary mb-2">10-GAME GAUNTLET</h2>
-            <p class="font-label-caps text-[10px] text-surface-tint tracking-widest uppercase">Select Driver & Connect</p>
+            <p class="font-label-caps text-[10px] text-surface-tint tracking-widest uppercase">Select Player & Connect</p>
         </section>
 
         <section class="flex flex-col gap-2">
-            <label class="font-label-caps text-[10px] text-on-surface-variant uppercase ml-2">DRIVER SELECT</label>
+            <label class="font-label-caps text-[10px] text-on-surface-variant uppercase ml-2">PLAYER SELECT</label>
             <select id="playerSelect" class="w-full h-14 bg-surface-container/60 border border-glass-stroke rounded-xl px-6 font-body-lg text-primary focus:outline-none focus:ring-2 focus:ring-surface-tint/50">
                 <option value="Parker">Parker (Electric Blue)</option>
                 <option value="Austin">Austin (Hot Pink)</option>
@@ -103,7 +103,7 @@
                 <button id="joinBtn" class="h-14 bg-secondary text-on-secondary font-label-caps rounded-xl shadow-[0_0_20px_rgba(255,75,137,0.4)] uppercase tracking-widest">JOIN ROOM</button>
             </div>
         </section>
-        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60 uppercase">Awaiting driver input...</div>
+        <div id="status" class="text-center font-label-caps text-[12px] text-on-surface-variant/60 uppercase">Awaiting player input...</div>
     </main>
 
     <!-- Race Screen -->
@@ -524,7 +524,7 @@
                         // if host themself is low, force local reload
                         if (isHost && lp.player === myName) {
                             setStatus('YOU HAVE BEEN REMOVED FOR LOW CPS', true);
-                            setTimeout(() => location.reload(), 1200);
+                            setTimeout(() => returnToSetup(true, 'YOU HAVE BEEN REMOVED FOR LOW CPS'), 1200);
                         }
                         // If a remote player was kicked, close the connection to remove them
                         if (isHost && lp.player !== myName) {
@@ -561,11 +561,11 @@
                 else if (d.type === 'kick') {
                     // If this client is targeted, remove them from the lobby
                     if (d.player === myName) {
-                        setStatus('REMOVED FROM LOBBY (LOW CPS)', true);
-                        setTimeout(() => location.reload(), 1200);
-                    } else {
-                        setStatus(`${d.player} removed from lobby`, true);
-                    }
+                            setStatus('REMOVED FROM LOBBY (LOW CPS)', true);
+                            setTimeout(() => returnToSetup(true, 'REMOVED FROM LOBBY (LOW CPS)'), 1200);
+                        } else {
+                            setStatus(`${d.player} removed from lobby`, true);
+                        }
                 }
             });
             conn.on('close', () => {
@@ -577,6 +577,23 @@
                 raceScreen.classList.remove('active');
                 setupScreen.classList.add('active');
             });
+        }
+
+        function returnToSetup(cleanPeer = false, message = 'Returning to setup') {
+            if (cleanPeer && peer) {
+                try { peer.destroy(); } catch (e) { /* ignore */ }
+                peer = null; conn = null;
+            } else {
+                // if there's an active connection, close it gracefully
+                if (conn && conn.open) try { conn.close(); } catch (e) {}
+                conn = null;
+            }
+            connStatusEl.textContent = 'OFFLINE';
+            connStatusEl.className = 'text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-secondary/30 bg-secondary/10 uppercase tracking-widest';
+            setStatus(message, true);
+            isHost = false;
+            raceScreen.classList.remove('active');
+            setupScreen.classList.add('active');
         }
 
         document.getElementById('hostBtn').onclick = () => {
@@ -612,14 +629,14 @@
             stopTimerBtn.ontouchstart = (e) => { e.preventDefault(); sendAction('stop-timer'); };
         }
         skipBtn.onclick = () => sendAction('skip');
-        document.getElementById('restartBtn').onclick = () => location.reload();
-        document.getElementById('overlayRestartBtn').onclick = () => location.reload();
+        document.getElementById('restartBtn').onclick = () => returnToSetup(true, 'TOURNAMENT RESTARTED');
+        document.getElementById('overlayRestartBtn').onclick = () => returnToSetup(true, 'TOURNAMENT RESTARTED');
         
         [1,2,3,4].forEach(i => {
             const el = document.getElementById(`input-code-${i}`);
             el.oninput = () => { if (el.value && i < 4) document.getElementById(`input-code-${i+1}`).focus(); };
         });
     </script>
-    <div id="version-badge" class="fixed bottom-2 right-3 text-on-surface-variant/60 text-[12px] font-label-caps tracking-wider">v0.0.1</div>
+    <div id="version-badge" class="fixed bottom-2 right-3 text-on-surface-variant/60 text-[12px] font-label-caps tracking-wider">v0.0.2</div>
 </body>
 </html>
