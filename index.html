@@ -517,18 +517,16 @@
                     const cps = (gameState[p] || 0) / elapsed;
                     if (cps < cpsThreshold) lowPlayers.push({ player: p, cps });
                 });
-                // notify and kick any low players
+                // notify any low players but DO NOT remove them from the room
                 if (lowPlayers.length) {
                     lowPlayers.forEach(lp => {
-                        if (conn && conn.open) conn.send({ type: 'kick', player: lp.player, cps: lp.cps });
-                        // if host themself is low, force local reload
-                        if (isHost && lp.player === myName) {
-                            setStatus('YOU HAVE BEEN REMOVED FOR LOW CPS', true);
-                            setTimeout(() => returnToSetup(true, 'YOU HAVE BEEN REMOVED FOR LOW CPS'), 1200);
-                        }
-                        // If a remote player was kicked, close the connection to remove them
-                        if (isHost && lp.player !== myName) {
-                            if (conn && conn.open) conn.close();
+                        // send a non-removal notice to the remote client(s)
+                        if (conn && conn.open) conn.send({ type: 'notice', noticeType: 'low-cps', player: lp.player, cps: lp.cps });
+                        // show local feedback; don't disconnect or reload
+                        if (lp.player === myName) {
+                            setStatus(`LOW CPS: ${lp.cps.toFixed(1)} cps — keep playing`, true);
+                        } else {
+                            setStatus(`${lp.player} had low CPS (${lp.cps.toFixed(1)} cps)`, true);
                         }
                     });
                 }
@@ -559,13 +557,13 @@
                 if (d.type === 'state') { gameState = d.state; tournamentScore = d.tournamentScore; currentGameIndex = d.currentGameIndex; render(); }
                 else if (d.type === 'action' && isHost) handleAction(d.name, d.player, d.val);
                 else if (d.type === 'kick') {
-                    // If this client is targeted, remove them from the lobby
-                    if (d.player === myName) {
-                            setStatus('REMOVED FROM LOBBY (LOW CPS)', true);
-                            setTimeout(() => returnToSetup(true, 'REMOVED FROM LOBBY (LOW CPS)'), 1200);
-                        } else {
-                            setStatus(`${d.player} removed from lobby`, true);
-                        }
+                    // Legacy: show a message but do not force removal
+                    setStatus(`${d.player} removed from lobby (legacy)`, true);
+                }
+                else if (d.type === 'notice' && d.noticeType === 'low-cps') {
+                    // Informational only — do not disconnect
+                    const msg = `${d.player} had low CPS (${(d.cps||0).toFixed(1)} cps)`;
+                    setStatus(msg, true);
                 }
             });
             conn.on('close', () => {
@@ -637,6 +635,6 @@
             el.oninput = () => { if (el.value && i < 4) document.getElementById(`input-code-${i+1}`).focus(); };
         });
     </script>
-    <div id="version-badge" class="fixed bottom-2 right-3 text-on-surface-variant/60 text-[12px] font-label-caps tracking-wider">v0.0.2</div>
+    <div id="version-badge" class="fixed bottom-2 right-3 text-on-surface-variant/60 text-[12px] font-label-caps tracking-wider">v0.0.3</div>
 </body>
 </html>
