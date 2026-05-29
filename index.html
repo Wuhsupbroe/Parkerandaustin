@@ -568,7 +568,15 @@
                     }
                 }
             });
-            conn.on('close', () => location.reload());
+            conn.on('close', () => {
+                // Don't force a full reload; return to setup and mark offline
+                conn = null;
+                connStatusEl.textContent = 'OFFLINE';
+                connStatusEl.className = 'text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-secondary/30 bg-secondary/10 uppercase tracking-widest';
+                setStatus('CONNECTION CLOSED', true);
+                raceScreen.classList.remove('active');
+                setupScreen.classList.add('active');
+            });
         }
 
         document.getElementById('hostBtn').onclick = () => {
