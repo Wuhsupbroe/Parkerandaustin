@@ -1,12 +1,26 @@
 # Parkerandaustin
 
-Welcome screen + mini two-player tap race for Parker and Austin.
+Decathlon Duel is a local, two-player party game for Parker and Austin.
 
-## How to play (two devices)
+## What it is
 
-1. Open `index.html` on both devices.
-2. On one device, choose your name and click **Create Offer (Host)**.
-3. Copy the host offer JSON and paste it on the second device.
-4. On the second device, choose the other name and click **Create Answer (Join)**.
-5. Copy the answer JSON back to the host device and click **Apply Answer (Host)**.
-6. Once connected, both players tap **Tap!**. First to 20 taps wins.
+- 10-round head-to-head gauntlet
+- Built-in room code matchmaking with PeerJS
+- Multiple mini-games: tapping, reaction, math, timing, and grid challenges
+
+## How to play
+
+1. Open `index.html` in a browser on both devices.
+2. Pick a player name.
+3. On one device, click **CREATE ROOM** and share the 4-digit room code.
+4. On the other device, enter the code and click **JOIN ROOM**.
+5. Play through the 10 missions and try to win the tournament.
+
+## Run locally
+
+- Open `index.html` directly, or
+- Use Wrangler for local development:
+
+```bash
+npx wrangler dev
+```
