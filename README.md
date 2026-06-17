@@ -18,9 +18,4 @@ Decathlon Duel is a local, two-player party game for Parker and Austin.
 
 ## Run locally
 
-- Open `index.html` directly, or
-- Use Wrangler for local development:
-
-```bash
-npx wrangler dev
-```
+Open `index.html` directly in a browser.
